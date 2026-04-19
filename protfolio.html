@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MILEN // CREATIVE ARCHITECT</title>
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700;900&family=JetBrains+Mono:wght@100;400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #050505;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --accent: #3498db;
+            --grid: rgba(255, 255, 255, 0.03);
+            --font-main: 'Inter', sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+        }
+
+        /* --- RESET & BASE --- */
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; }
+        body { 
+            background: var(--bg); 
+            color: var(--text); 
+            font-family: var(--font-main); 
+            overflow-x: hidden;
+            line-height: 1.4;
+        }
+        canvas { position: fixed; top: 0; left: 0; z-index: -1; pointer-events: none; }
+
+        /* --- CUSTOM CURSOR --- */
+        .cursor {
+            position: fixed;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10000;
+            mix-blend-mode: difference;
+        }
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease-out;
+        }
+
+        /* --- PRELOADER --- */
+        #preloader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        .loader-num {
+            font-family: var(--font-mono);
+            font-size: 5rem;
+            font-weight: 100;
+        }
+
+        /* --- LAYOUT GRID --- */
+        .grid-system {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 4vw;
+            pointer-events: none;
+            z-index: 50;
+        }
+        .grid-line {
+            width: 1px;
+            height: 100%;
+            background: var(--grid);
+        }
+
+        /* --- NAVIGATION --- */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 1000;
+            font-family: var(--font-mono);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .nav-links { display: flex; gap: 40px; }
+        .magnetic-wrap { display: inline-block; }
+
+        /* --- SECTIONS --- */
+        section {
+            padding: 100px 4vw;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* --- HERO --- */
+        .hero {
+            height: 100vh;
+            text-align: center;
+        }
+        .hero-title-container {
+            overflow: hidden;
+            position: relative;
+        }
+        .hero h1 {
+            font-size: 16vw;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            text-transform: uppercase;
+            line-height: 0.8;
+            margin-bottom: 20px;
+        }
+        .hero-sub {
+            font-family: var(--font-mono);
+            font-size: 14px;
+            color: var(--text-dim);
+            letter-spacing: 5px;
+        }
+
+        /* --- PROJECTS --- */
+        .project-list { margin-top: 100px; }
+        .project-item {
+            position: relative;
+            padding: 60px 0;
+            border-bottom: 1px solid var(--grid);
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            align-items: center;
+            text-decoration: none;
+            color: inherit;
+        }
+        .project-item h2 {
+            font-size: 5vw;
+            font-weight: 300;
+            text-transform: uppercase;
+            transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .project-item:hover h2 { transform: translateX(30px); }
+        .project-item span { font-family: var(--font-mono); color: var(--text-dim); }
+        
+        .project-img-reveal {
+            position: absolute;
+            width: 400px;
+            height: 250px;
+            background: #222;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.5s ease;
+        }
+        .project-item:hover .project-img-reveal {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 0.8;
+        }
+
+        /* --- CAPABILITIES --- */
+        .caps-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 40px;
+            margin-top: 100px;
+        }
+        .cap-card {
+            border: 1px solid var(--grid);
+            padding: 40px;
+            background: rgba(255,255,255,0.01);
+        }
+        .cap-card h3 { font-family: var(--font-mono); margin-bottom: 20px; color: var(--accent); }
+
+        /* --- FOOTER --- */
+        footer {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .footer-cta {
+            font-size: 8vw;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--text);
+            position: relative;
+        }
+        .footer-info {
+            margin-top: 100px;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            font-family: var(--font-mono);
+            font-size: 10px;
+            color: var(--text-dim);
+        }
+
+        /* --- SCROLL PROGRESS --- */
+        .progress-bar {
+            position: fixed;
+            top: 0; left: 0;
+            height: 2px;
+            background: var(--accent);
+            z-index: 2000;
+            width: 0%;
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Structure Elements -->
+    <div id="preloader">
+        <div class="loader-num">00</div>
+    </div>
+    
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+    <div class="progress-bar"></div>
+
+    <div class="grid-system">
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+        <div class="grid-line"></div>
+    </div>
+
+    <!-- UI Overlay -->
+    <nav>
+        <div class="magnetic-wrap"><div class="logo">Milen.Creative</div></div>
+        <div class="nav-links">
+            <div class="magnetic-wrap"><span>Work</span></div>
+            <div class="magnetic-wrap"><span>About</span></div>
+            <div class="magnetic-wrap"><span>Contact</span></div>
+        </div>
+        <div class="status">System: v1.0 // Online</div>
+    </nav>
+
+    <!-- Main Content -->
+    <main data-scroll-container>
+        
+        <section class="hero" id="home">
+            <div class="hero-sub">[ EST. 2025 ]</div>
+            <div class="hero-title-container">
+                <h1 id="glitch-title">MILEN</h1>
+            </div>
+            <div class="hero-sub">INTERACTIVE SYSTEMS ARCHITECT</div>
+        </section>
+
+        <section class="work" id="work">
+            <div class="hero-sub">SELECTED PROJECTS</div>
+            <div class="project-list">
+                <a href="#" class="project-item">
+                    <span>01</span>
+                    <h2>NEBULOUS</h2>
+                    <span>WebGL / Branding</span>
+                    <div class="project-img-reveal"></div>
+                </a>
+                <a href="#" class="project-item">
+                    <span>02</span>
+                    <h2>FROZEN_LOGIC</h2>
+                    <span>UI/UX Design</span>
+                    <div class="project-img-reveal"></div>
+                </a>
+                <a href="#" class="project-item">
+                    <span>03</span>
+                    <h2>VOID_OS</h2>
+                    <span>Creative Dev</span>
+                    <div class="project-img-reveal"></div>
+                </a>
+                <a href="#" class="project-item">
+                    <span>04</span>
+                    <h2>PULSE</h2>
+                    <span>Motion Graphics</span>
+                    <div class="project-img-reveal"></div>
+                </a>
+            </div>
+        </section>
+
+        <section class="about">
+            <div class="hero-sub">ABOUT THE STUDIO</div>
+            <h2 style="font-size: 4vw; margin-top: 50px; font-weight: 300;">
+                MILEN focuses on the intersection of <span style="color:var(--accent)">engineering</span> and <span style="font-style: italic;">emotion</span>. We build digital products that feel like living structures.
+            </h2>
+            <div class="caps-grid">
+                <div class="cap-card">
+                    <h3>01 / STRATEGY</h3>
+                    <p>Defining the core DNA of digital experiences before the first pixel is placed.</p>
+                </div>
+                <div class="cap-card">
+                    <h3>02 / DESIGN</h3>
+                    <p>High-fidelity visual systems that prioritize clarity, depth, and modularity.</p>
+                </div>
+                <div class="cap-card">
+                    <h3>03 / CODE</h3>
+                    <p>Production-grade development using modern stacks and motion libraries.</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="hero-sub">READY TO BUILD?</div>
+            <a href="mailto:hi@milen.inc" class="footer-cta">LET'S TALK</a>
+            <div class="footer-info">
+                <div>&copy; 2025 MILEN INC.</div>
+                <div>LOCAL TIME: <span id="time">00:00:00</span></div>
+                <div>DESIGNED BY THE FUTURE</div>
+            </div>
+        </footer>
+
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+
+    <script>
+        /**
+         * 1. CORE ENGINE: TEXT SCRAMBLE (The Igloo Look)
+         */
+        class TextScramble {
+            constructor(el) {
+                this.el = el;
+                this.chars = '!<>-_\\/[]{}—=+*^?#________';
+                this.update = this.update.bind(this);
+            }
+            setText(newText) {
+                const oldText = this.el.innerText;
+                const length = Math.max(oldText.length, newText.length);
+                const promise = new Promise((resolve) => this.resolve = resolve);
+                this.queue = [];
+                for (let i = 0; i < length; i++) {
+                    const from = oldText[i] || '';
+                    const to = newText[i] || '';
+                    const start = Math.floor(Math.random() * 40);
+                    const end = start + Math.floor(Math.random() * 40);
+                    this.queue.push({ from, to, start, end });
+                }
+                cancelAnimationFrame(this.frameRequest);
+                this.frame = 0;
+                this.update();
+                return promise;
+            }
+            update() {
+                let output = '';
+                let complete = 0;
+                for (let i = 0, n = this.queue.length; i < n; i++) {
+                    let { from, to, start, end, char } = this.queue[i];
+                    if (this.frame >= end) {
+                        complete++;
+                        output += to;
+                    } else if (this.frame >= start) {
+                        if (!char || Math.random() < 0.28) {
+                            char = this.randomChar();
+                            this.queue[i].char = char;
+                        }
+                        output += `<span class="dud">${char}</span>`;
+                    } else {
+                        output += from;
+                    }
+                }
+                this.el.innerHTML = output;
+                if (complete === this.queue.length) {
+                    this.resolve();
+                } else {
+                    this.frameRequest = requestAnimationFrame(this.update);
+                    this.frame++;
+                }
+            }
+            randomChar() {
+                return this.chars[Math.floor(Math.random() * this.chars.length)];
+            }
+        }
+
+        /**
+         * 2. INITIALIZATION & PRELOADER
+         */
+        const scramble = new TextScramble(document.getElementById('glitch-title'));
+        let progress = 0;
+        const loaderNum = document.querySelector('.loader-num');
+
+        const loadingInterval = setInterval(() => {
+            progress += Math.floor(Math.random() * 5) + 1;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(loadingInterval);
+                finishLoading();
+            }
+            loaderNum.innerText = progress.toString().padStart(2, '0');
+        }, 50);
+
+        function finishLoading() {
+            gsap.to('#preloader', {
+                y: '-100%',
+                duration: 1.2,
+                ease: 'expo.inOut',
+                onComplete: () => {
+                    scramble.setText('MILEN');
+                    initAnimations();
+                }
+            });
+        }
+
+        /**
+         * 3. THREE.JS PARTICLE BACKGROUND
+         */
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const particlesGeometry = new THREE.BufferGeometry();
+        const posArray = new Float32Array(5000 * 3);
+        for(let i=0; i < 5000 * 3; i++) { posArray[i] = (Math.random() - 0.5) * 10; }
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const material = new THREE.PointsMaterial({ size: 0.005, color: 0x3498db });
+        const particlesMesh = new THREE.Points(particlesGeometry, material);
+        scene.add(particlesMesh);
+        camera.position.z = 3;
+
+        function animateThree() {
+            requestAnimationFrame(animateThree);
+            particlesMesh.rotation.y += 0.001;
+            renderer.render(scene, camera);
+        }
+        animateThree();
+
+        /**
+         * 4. MOTION & SMOOTH SCROLL (LENIS + GSAP)
+         */
+        const lenis = new Lenis();
+        lenis.on('scroll', ScrollTrigger.update);
+        gsap.ticker.add((time)=>{ lenis.raf(time * 1000) });
+        gsap.ticker.lagSmoothing(0);
+
+        function initAnimations() {
+            gsap.registerPlugin(ScrollTrigger);
+
+            // Progress Bar
+            gsap.to('.progress-bar', {
+                width: '100%',
+                ease: 'none',
+                scrollTrigger: { scrub: 0.3 }
+            });
+
+            // Section Fades
+            gsap.utils.toArray('section').forEach(section => {
+                gsap.from(section, {
+                    opacity: 0,
+                    y: 100,
+                    duration: 1,
+                    scrollTrigger: {
+                        trigger: section,
+                        start: "top 80%",
+                        end: "top 20%",
+                        scrub: true
+                    }
+                });
+            });
+
+            // Magnetic Nav
+            const magnets = document.querySelectorAll('.magnetic-wrap');
+            magnets.forEach((mag) => {
+                mag.addEventListener('mousemove', (e) => {
+                    const { offsetLeft, offsetTop, offsetWidth, offsetHeight } = mag;
+                    const x = e.pageX - offsetLeft - offsetWidth / 2;
+                    const y = e.pageY - offsetTop - offsetHeight / 2;
+                    gsap.to(mag, { x: x * 0.3, y: y * 0.3, duration: 0.3 });
+                });
+                mag.addEventListener('mouseleave', () => {
+                    gsap.to(mag, { x: 0, y: 0, duration: 0.3 });
+                });
+            });
+        }
+
+        /**
+         * 5. CURSOR ENGINE
+         */
+        const cursor = document.querySelector('.cursor');
+        const follower = document.querySelector('.cursor-follower');
+        
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0 });
+            gsap.to(follower, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.3 });
+        });
+
+        document.querySelectorAll('a, .magnetic-wrap').forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                gsap.to(follower, { scale: 2, backgroundColor: 'rgba(255,255,255,0.1)', duration: 0.3 });
+            });
+            link.addEventListener('mouseleave', () => {
+                gsap.to(follower, { scale: 1, backgroundColor: 'transparent', duration: 0.3 });
+            });
+        });
+
+        /**
+         * 6. UTILS & TIME
+         */
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('time').innerText = now.getHours().toString().padStart(2, '0') + ":" + 
+                                                      now.getMinutes().toString().padStart(2, '0') + ":" + 
+                                                      now.getSeconds().toString().padStart(2, '0');
+        }
+        setInterval(updateTime, 1000);
+
+        // Window Resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html>
