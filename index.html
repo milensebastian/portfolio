@@ -581,17 +581,17 @@
         .project-fallback[data-project-visual="stegovault"] .visual-orbit { border-color: rgba(212, 178, 128, 0.3); transform: rotate(-18deg); animation: visualDrift 14s linear infinite; }
         .project-fallback[data-project-visual="stegovault"] .visual-orbit::after { background: #d4b280; box-shadow: 0 0 12px #d4b280; }
 
-        .project-fallback[data-project-visual="attackmirror"] .project-generated {
-            background: repeating-linear-gradient(0deg, transparent 0 12px, rgba(255, 255, 255, 0.025) 13px 14px), radial-gradient(circle at 26% 55%, rgba(155, 30, 37, 0.18), transparent 28%);
+        .project-fallback[data-project-visual="aetheria"] .project-generated {
+            background: radial-gradient(circle at 65% 40%, rgba(98, 160, 255, 0.22), transparent 36%), radial-gradient(circle at 30% 60%, rgba(168, 85, 247, 0.18), transparent 32%), linear-gradient(135deg, rgba(6, 12, 28, 0.9), rgba(10, 6, 24, 0.9));
         }
-        .project-fallback[data-project-visual="attackmirror"] .visual-grid { opacity: 0.16; background-size: 42px 20px; transform: skewY(-10deg) scale(1.2); }
-        .project-fallback[data-project-visual="attackmirror"] .visual-line { background: linear-gradient(90deg, transparent 4%, rgba(207, 51, 59, 0.7) 38%, rgba(78, 177, 119, 0.45) 58%, transparent 94%); }
-        .project-fallback[data-project-visual="attackmirror"] .line-a { animation: scanSweep 6s ease-in-out infinite; }
-        .project-fallback[data-project-visual="attackmirror"] .line-b { opacity: 0.55; animation: scanSweep 8s ease-in-out -3s infinite reverse; }
-        .project-fallback[data-project-visual="attackmirror"] .visual-node { border: 1px solid rgba(229, 61, 70, 0.85); background: #090909; box-shadow: 0 0 12px rgba(229, 61, 70, 0.45); }
-        .project-fallback[data-project-visual="attackmirror"] .node-b { border-color: rgba(92, 202, 137, 0.8); box-shadow: 0 0 12px rgba(92, 202, 137, 0.38); }
-        .project-fallback[data-project-visual="attackmirror"] .visual-orbit { width: 68%; left: 38%; top: 9%; border-color: rgba(229, 61, 70, 0.22); border-radius: 12%; transform: rotate(29deg); }
-        .project-fallback[data-project-visual="attackmirror"] .visual-orbit::after { background: #62ca89; box-shadow: 0 0 10px #62ca89; }
+        .project-fallback[data-project-visual="aetheria"] .visual-grid { opacity: 0.18; background-size: 38px 38px; transform: rotate(15deg) scale(1.1); }
+        .project-fallback[data-project-visual="aetheria"] .visual-line { background: linear-gradient(90deg, transparent 4%, rgba(56, 189, 248, 0.8) 45%, rgba(192, 132, 252, 0.7) 65%, transparent 96%); }
+        .project-fallback[data-project-visual="aetheria"] .line-a { animation: scanSweep 7s ease-in-out infinite; }
+        .project-fallback[data-project-visual="aetheria"] .line-b { opacity: 0.65; animation: scanSweep 9s ease-in-out -4s infinite reverse; }
+        .project-fallback[data-project-visual="aetheria"] .visual-node { border: 1px solid rgba(56, 189, 248, 0.9); background: #070d1e; box-shadow: 0 0 16px rgba(56, 189, 248, 0.6); }
+        .project-fallback[data-project-visual="aetheria"] .node-b { border-color: rgba(192, 132, 252, 0.9); box-shadow: 0 0 16px rgba(192, 132, 252, 0.55); }
+        .project-fallback[data-project-visual="aetheria"] .visual-orbit { width: 64%; left: 32%; top: 12%; border-color: rgba(56, 189, 248, 0.3); border-radius: 50%; transform: rotate(24deg); animation: orbitDrift 12s ease-in-out infinite; }
+        .project-fallback[data-project-visual="aetheria"] .visual-orbit::after { background: #38bdf8; box-shadow: 0 0 12px #38bdf8; }
 
         .project-fallback[data-project-visual="whale-monitor"] .project-generated {
             background: radial-gradient(circle at 68% 38%, rgba(61, 150, 255, 0.2), transparent 32%), linear-gradient(180deg, rgba(4, 21, 48, 0.1), rgba(2, 7, 19, 0.2));
@@ -1348,12 +1348,12 @@
         }
         .cat-eye-bg, .cat-pupil {
             transform-origin: center;
-            transition: transform 0.1s ease-out;
+            transition: transform 0.1s ease-out, opacity 0.35s ease;
         }
         .cat-eyelid {
             transform-origin: center top;
             transform: scaleY(0);
-            transition: transform 0.08s ease-in;
+            transition: transform 0.32s cubic-bezier(0.33, 1, 0.68, 1);
         }
         .cyber-cat-container.is-blinking .cat-eyelid {
             transform: scaleY(1);
@@ -1413,10 +1413,13 @@
         .cyber-cat-container.is-purring .cyber-cat-svg {
             animation: catPurr 0.16s ease-in-out infinite, catPurrGlow 1.4s ease-in-out infinite;
         }
-        .cyber-cat-container.is-purring .cat-eye-wrap {
-            transform-origin: center;
-            transform: scaleY(0.82);
-            transition: transform 0.4s ease;
+        .cyber-cat-container.is-purring .cat-eyelid {
+            transform: scaleY(1);
+            transition: transform 0.42s cubic-bezier(0.33, 1, 0.68, 1);
+        }
+        .cyber-cat-container.is-purring .cat-pupil {
+            opacity: 0.35;
+            transition: opacity 0.35s ease;
         }
 
         /* Sleeping State */
@@ -2033,6 +2036,7 @@
                 stack: ['React', 'TypeScript', 'Node.js', 'Express', 'Web Crypto API', 'Gemini API', 'Vercel'],
                 status: 'Project — Live',
                 gradient: 'linear-gradient(135deg, #14100a 0%, #2b2210 50%, #0f0b06 100%)',
+                image: 'assets/stegovault-1.png',
                 images: [
                     'assets/stegovault-1.png',
                     'assets/stegovault-2.png'
@@ -2042,16 +2046,19 @@
             },
             {
                 num: '02',
-                title: 'ATTACKMIRROR',
-                category: 'Cybersecurity / AI / OSINT',
+                title: 'AETHERIA',
+                category: 'Creative Tech / WebGL / Computer Vision',
                 year: '2026',
-                role: 'Security Research / Developer',
-                description: 'An experimental cybersecurity concept focused on modeling an attacker\'s perspective by combining OSINT, security analysis, and AI-assisted reasoning. The goal is to transform scattered security information into an understandable adversarial narrative and threat-analysis workflow.',
-                stack: ['Python', 'Cybersecurity', 'OSINT', 'AI'],
-                status: 'Concept / Development',
-                gradient: 'linear-gradient(135deg, #0d0d0d 0%, #1a0505 50%, #0a150a 100%)',
-                image: '',
-                url: '',
+                role: 'Creative Technologist & Developer',
+                description: 'An interactive 3D generative visual installation driven by real-time hand gestures. Combines Three.js and WebGL particle systems with MediaPipe machine-vision tracking, allowing users to sculpt, orbit, and morph 10 dynamic particle formations and synthesized generative soundscapes with private in-browser camera processing.',
+                stack: ['Three.js', 'WebGL', 'MediaPipe', 'Web Audio API', 'JavaScript', 'Vercel'],
+                status: 'Project — Live',
+                gradient: 'linear-gradient(135deg, #050814 0%, #0c1836 50%, #160a2c 100%)',
+                image: 'assets/aetheria-1.jpg',
+                images: [
+                    'assets/aetheria-1.jpg'
+                ],
+                url: 'https://aethiria-woad.vercel.app/',
                 github: ''
             },
             {
@@ -2112,7 +2119,7 @@
 
         const projectVisualTypes = {
             'STEGOVAULT': 'stegovault',
-            'ATTACKMIRROR': 'attackmirror',
+            'AETHERIA': 'aetheria',
             'WHALE MONITOR': 'whale-monitor',
             'COMFORT MODE': 'comfort-mode'
         };
@@ -2163,18 +2170,19 @@
         }
 
         function setProjectVisual(el, proj, requestId) {
-            if (!proj.image) {
+            const targetImg = proj.image || (Array.isArray(proj.images) && proj.images.length ? proj.images[0] : '');
+            if (!targetImg) {
                 applyProjectGradient(el, proj);
                 return Promise.resolve(false);
             }
 
-            return checkProjectImage(proj.image).then((available) => {
+            return checkProjectImage(targetImg).then((available) => {
                 if (requestId !== undefined && requestId !== previewVisualRequest) {
                     return available;
                 }
 
                 if (available) {
-                    applyProjectImage(el, proj);
+                    applyProjectImage(el, { ...proj, image: targetImg });
                 } else {
                     applyProjectGradient(el, proj);
                 }
@@ -2282,6 +2290,17 @@
                     this.onDoubleClick();
                 });
 
+                // Hover petting — eyes close contentedly while purring
+                this.el.addEventListener('mouseenter', () => {
+                    if (this.state === 'SLEEPING') this.wake();
+                    if (this.state === 'HIDDEN' || this.state === 'HERO_ENTRY') return;
+                    this.startPurring();
+                });
+
+                this.el.addEventListener('mouseleave', () => {
+                    this.stopPurring();
+                });
+
                 // Mouse movement tracking throttled with RAF
                 let rafId = null;
                 window.addEventListener('mousemove', (e) => {
@@ -2294,7 +2313,7 @@
 
                 // Periodic eye blink interval — mostly quick blinks, occasionally a slow, contented one
                 setInterval(() => {
-                    if (this.state !== 'IDLE' || Math.random() >= 0.6) return;
+                    if (this.state !== 'IDLE' || this.isPurring || Math.random() >= 0.6) return;
                     if (Math.random() < 0.12) {
                         this.el.classList.add('is-slow-blinking');
                         setTimeout(() => this.el.classList.remove('is-slow-blinking'), 900);
@@ -2887,7 +2906,7 @@
             index: 0,
             autoplayTimer: null,
 
-            build(el, images) {
+            build(el, images, projTitle = 'Project') {
                 this.destroy();
                 this.host = el;
                 this.images = images;
@@ -2903,7 +2922,7 @@
 
                 const slides = images.map((src, i) => `
                     <div class="detail-gallery-slide${i === 0 ? ' active' : ''}" data-index="${i}">
-                        <img src="${src}" alt="StegoVault screenshot ${i + 1}" loading="lazy">
+                        <img src="${src}" alt="${projTitle} screenshot ${i + 1}" loading="lazy">
                     </div>
                 `).join('');
 
@@ -2989,7 +3008,7 @@
 
             if (Array.isArray(proj.images) && proj.images.length) {
                 if (detailImgLabel) detailImgLabel.style.display = 'none';
-                DetailGallery.build(detailImg, proj.images);
+                DetailGallery.build(detailImg, proj.images, proj.title);
             } else {
                 DetailGallery.destroy();
                 setProjectVisual(detailImg, proj).then((hasImage) => {
