@@ -593,19 +593,6 @@
         .project-fallback[data-project-visual="aetheria"] .visual-orbit { width: 64%; left: 32%; top: 12%; border-color: rgba(56, 189, 248, 0.3); border-radius: 50%; transform: rotate(24deg); animation: orbitDrift 12s ease-in-out infinite; }
         .project-fallback[data-project-visual="aetheria"] .visual-orbit::after { background: #38bdf8; box-shadow: 0 0 12px #38bdf8; }
 
-        .project-fallback[data-project-visual="whale-monitor"] .project-generated {
-            background: radial-gradient(circle at 68% 38%, rgba(61, 150, 255, 0.2), transparent 32%), linear-gradient(180deg, rgba(4, 21, 48, 0.1), rgba(2, 7, 19, 0.2));
-        }
-        .project-fallback[data-project-visual="whale-monitor"] .visual-grid { opacity: 0.22; background-size: 34px 34px; mask-image: linear-gradient(to right, transparent, #000 20%, #000 90%, transparent); }
-        .project-fallback[data-project-visual="whale-monitor"] .visual-line { height: 2px; background: linear-gradient(90deg, transparent, rgba(67, 161, 255, 0.72), transparent); box-shadow: 0 0 10px rgba(67, 161, 255, 0.38); }
-        .project-fallback[data-project-visual="whale-monitor"] .line-a { top: 58%; transform: rotate(-18deg) scaleX(0.85); animation: dataFlow 7s ease-in-out infinite; }
-        .project-fallback[data-project-visual="whale-monitor"] .line-b { top: 37%; transform: rotate(13deg) scaleX(0.72); opacity: 0.7; animation: dataFlow 9s ease-in-out -3s infinite reverse; }
-        .project-fallback[data-project-visual="whale-monitor"] .visual-node { background: #65b8ff; box-shadow: 0 0 15px rgba(101, 184, 255, 0.75); }
-        .project-fallback[data-project-visual="whale-monitor"] .node-a { width: 6px; height: 6px; animation: visualPulse 4s ease-in-out infinite; }
-        .project-fallback[data-project-visual="whale-monitor"] .node-b { width: 12px; height: 12px; animation: visualPulse 4s ease-in-out -1.5s infinite; }
-        .project-fallback[data-project-visual="whale-monitor"] .visual-orbit { width: 46%; left: 12%; top: 22%; border-color: rgba(101, 184, 255, 0.28); border-radius: 50% 50% 10% 10%; transform: rotate(42deg); }
-        .project-fallback[data-project-visual="whale-monitor"] .visual-orbit::after { background: #65b8ff; box-shadow: 0 0 12px #65b8ff; }
-
         .project-fallback[data-project-visual="comfort-mode"] .project-generated {
             background: radial-gradient(ellipse at 62% 42%, rgba(120, 102, 255, 0.18), transparent 34%), linear-gradient(135deg, rgba(22, 15, 58, 0.08), rgba(5, 12, 40, 0.18));
         }
@@ -622,7 +609,6 @@
         @keyframes visualPulse { 0%, 100% { opacity: 0.45; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.15); } }
         @keyframes visualDrift { to { transform: rotate(342deg); } }
         @keyframes scanSweep { 0%, 100% { transform: translateX(-8%) rotate(-12deg); } 50% { transform: translateX(8%) rotate(-12deg); } }
-        @keyframes dataFlow { 0%, 100% { opacity: 0.35; } 50% { opacity: 1; } }
         @keyframes motionTrail { 0%, 100% { opacity: 0.35; } 50% { opacity: 0.95; } }
         @keyframes orbitDrift { 0%, 100% { transform: rotateX(58deg) rotateZ(-24deg); } 50% { transform: rotateX(52deg) rotateZ(12deg); } }
         @media (prefers-reduced-motion: reduce) {
@@ -2023,7 +2009,7 @@
         gsap.registerPlugin(ScrollTrigger);
 
         // ================================
-        // PROJECT DATA (placeholder content)
+        // PROJECT DATA
         // ================================
         const projects = [
             {
@@ -2063,20 +2049,36 @@
             },
             {
                 num: '03',
-                title: 'WHALE MONITOR',
-                category: 'Crypto Intelligence / Data Visualization',
+                title: 'BRIDGE',
+                category: 'Peer-to-Peer / File Sharing / WebRTC',
                 year: '2026',
-                role: 'Developer',
-                description: 'A real-time cryptocurrency market intelligence interface designed to visualize large trades, market direction, long-versus-short activity, and trading signals. The project explores combining exchange data, technical indicators, and whale activity into a single visual monitoring interface.',
-                stack: ['Python', 'PyQt6', 'pyqtgraph', 'Binance API'],
-                status: 'Experimental / Development',
-                gradient: 'linear-gradient(135deg, #050810 0%, #0a1628 50%, #051018 100%)',
-                image: '',
-                url: '',
-                github: ''
+                role: 'Full-Stack Developer',
+                description: 'A browser-based workspace for sharing files, folders, and clipboard text between phones and computers. Devices join a QR-code room and confirm matching symbols before sharing. Rooms support up to 20 devices, with encrypted file streaming, selective clipboard sharing, camera capture, and tools for signing or controlling slides.',
+                stack: ['React', 'TypeScript', 'WebRTC', 'Web Crypto API', 'OPFS', 'Node.js'],
+                status: 'Project — Live',
+                gradient: 'linear-gradient(135deg, #101613 0%, #23372c 50%, #0d1511 100%)',
+                image: 'assets/bridge.png',
+                images: ['assets/bridge.png'],
+                url: 'https://bridge-eight-beryl.vercel.app/',
+                github: 'https://github.com/milensebastian/Bridge'
             },
             {
                 num: '04',
+                title: 'FORGE P2P',
+                category: 'Developer Tools / Real-Time Collaboration',
+                year: '2026',
+                role: 'Full-Stack Developer',
+                description: 'A peer-to-peer coding workspace that lets collaborators edit code and Markdown in real time. It uses WebRTC and Yjs to synchronize documents and stores drafts locally in the browser. Collaborators can join through a room link or QR code, with a built-in editor for writing and running code.',
+                stack: ['React', 'TypeScript', 'WebRTC', 'Yjs', 'Monaco Editor', 'IndexedDB'],
+                status: 'Project — Live',
+                gradient: 'linear-gradient(135deg, #0e0f18 0%, #221c3e 50%, #121323 100%)',
+                image: 'assets/forge-p2p.png',
+                images: ['assets/forge-p2p.png'],
+                url: 'https://forge-p2p.vercel.app/',
+                github: 'https://github.com/milensebastian/forge-p2p'
+            },
+            {
+                num: '05',
                 title: 'COMFORT MODE',
                 category: 'Android / Sensors / Human-Computer Interaction',
                 year: '2026',
@@ -2120,7 +2122,6 @@
         const projectVisualTypes = {
             'STEGOVAULT': 'stegovault',
             'AETHERIA': 'aetheria',
-            'WHALE MONITOR': 'whale-monitor',
             'COMFORT MODE': 'comfort-mode'
         };
 
