@@ -297,7 +297,7 @@
         }
 
         /* --- HERO --- */
-        .hero { height: 100vh; text-align: center; padding-top: 0; }
+        .hero { position: relative; height: 100vh; text-align: center; padding-top: 0; }
         .hero-title-container { overflow: hidden; position: relative; }
         .hero h1 {
             font-size: clamp(60px, 16vw, 220px);
@@ -356,187 +356,181 @@
 
         /* --- PROJECTS --- */
         .work { min-height: auto; padding-block: clamp(110px, 12vw, 170px); }
-        .project-list {
-            margin-top: 48px;
+        .project-carousel {
+            --card-width: clamp(186px, 60vw, 328px);
+            --card-height: clamp(298px, 82vw, 408px);
+            --inner-offset: clamp(133px, 26vw, 257px);
+            --outer-offset: clamp(201px, 41vw, 411px);
             width: 100%;
-            max-width: 1240px;
-            display: grid;
-            gap: 12px;
+            max-width: 1210px;
+            margin: 24px auto 0;
         }
-        .project-more { width: 100%; max-width: 1240px; margin-top: 20px; }
-        .project-more[hidden] { display: none; }
-        .project-more summary {
-            display: inline-flex;
-            align-items: center;
-            gap: 14px;
-            min-height: 44px;
-            padding: 10px 15px;
-            border: 1px solid rgba(255,255,255,0.17);
-            font: 11px var(--font-mono);
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            list-style: none;
-        }
-        .project-more summary::-webkit-details-marker { display: none; }
-        .project-more summary:hover, .project-more summary:focus-visible { border-color: var(--accent); color: var(--accent); }
-        .project-more summary::after { content: '+'; color: var(--accent); }
-        .project-more[open] summary::after { content: '−'; }
-        .project-more[open] .project-more-open, .project-more:not([open]) .project-more-close { display: none; }
-        .project-more .project-list { margin-top: 14px; }
-        .project-item {
+        .project-track {
             position: relative;
-            min-height: 0;
-            padding: clamp(22px, 2.4vw, 32px);
-            border: 1px solid rgba(255,255,255,0.09);
-            display: grid;
-            grid-template-columns: 82px minmax(0, 1fr) minmax(176px, 0.34fr);
-            align-items: stretch;
-            gap: clamp(22px, 3vw, 52px);
-            text-decoration: none;
-            color: inherit;
-            cursor: pointer !important;
-            overflow: hidden;
-            background: linear-gradient(110deg, rgba(255,255,255,0.035), rgba(255,255,255,0.012));
-            transition: border-color 0.35s ease, background 0.35s ease, transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+            height: calc(var(--card-height) + 105px);
+            overflow: clip;
+            isolation: isolate;
+            touch-action: pan-y pinch-zoom;
         }
-        .project-item::before {
-            content: '';
+        .project-feature {
+            --offset: 0px;
+            --height-offset: 5px;
+            --angle: 0deg;
+            --shrink: 1;
+            --depth: 3;
+            --card-transform: translate(calc(-50% + var(--offset)), var(--height-offset)) rotate(var(--angle)) scale(var(--shrink));
             position: absolute;
-            inset: 0 auto 0 0;
-            width: 3px;
-            background: var(--accent);
-            transform: scaleY(0);
-            transform-origin: bottom;
-            transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1);
-        }
-        .project-item::after {
-            content: '';
-            position: absolute;
-            width: 330px;
-            height: 330px;
-            top: 50%;
-            right: -150px;
-            transform: translateY(-50%);
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(52, 152, 219, 0.13), transparent 68%);
-            opacity: 0;
-            transition: opacity 0.35s ease;
-            pointer-events: none;
-        }
-        .project-item:first-child { border-top: 1px solid rgba(255,255,255,0.09); }
-        .project-item:hover {
-            border-color: rgba(52, 152, 219, 0.55);
-            background: linear-gradient(110deg, rgba(52, 152, 219, 0.09), rgba(255,255,255,0.018));
-            transform: translateX(7px);
-        }
-        .project-item:hover::before { transform: scaleY(1); }
-        .project-item:hover::after { opacity: 1; }
-        .project-index, .project-primary, .project-aside { position: relative; z-index: 1; }
-        .project-index {
+            inset: 0 auto auto 50%;
+            z-index: var(--depth);
+            width: var(--card-width);
+            height: var(--card-height);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
-            font-family: var(--font-mono);
+            align-items: stretch;
+            padding: clamp(16px, 2vw, 23px);
+            border: 1px solid var(--card-outline, #343b42);
+            border-radius: 14px;
+            background: linear-gradient(165deg, #1a2027, #0e131a 72%);
+            box-shadow: 0 15px 30px rgba(0,0,0,.31);
+            text-align: left;
+            transform: var(--card-transform);
+            transition: transform .62s cubic-bezier(.22,1,.36,1), border-color .25s ease;
         }
-        .project-num { color: var(--accent); font-size: 12px; letter-spacing: 1px; }
-        .project-year { color: var(--text-dim); font-size: 10px; letter-spacing: 1.5px; }
-        .project-primary { display: flex; flex-direction: column; align-items: flex-start; }
-        .project-eyebrow {
-            color: var(--text-dim);
-            font-family: var(--font-mono);
-            font-size: 9px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            margin-bottom: 14px;
+        .project-feature[hidden] { display: none; }
+        .project-feature.has-gold-outline {
+            --card-outline: #c8ae79;
+            --card-active-outline: #e6cd9a;
         }
-        .project-item h2 {
-            font-size: clamp(30px, 4.2vw, 64px);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: -0.055em;
-            line-height: 0.92;
-            transition: color 0.3s;
+        .project-feature[data-position="0"] {
+            border-color: var(--card-active-outline, #526575);
+            background: linear-gradient(165deg, #222b35, #111820 76%);
         }
-        .project-item:hover h2 { transform: none; color: var(--accent); }
-        .project-summary {
-            max-width: 660px;
-            margin-top: 13px;
-            color: rgba(255,255,255,0.57);
-            font-size: 13px;
-            line-height: 1.6;
+        .project-feature[data-position="-1"], .project-feature[data-position="1"] {
+            --height-offset: 46px;
+            --shrink: .92;
+            --depth: 2;
         }
-        .project-stack-preview { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 18px; }
-        .project-stack-preview span {
-            border: 1px solid rgba(255,255,255,0.13);
-            padding: 5px 8px;
-            color: rgba(255,255,255,0.56);
-            font-family: var(--font-mono);
-            font-size: 8px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
+        .project-feature[data-position="-1"] { --offset: calc(-1 * var(--inner-offset)); --angle: -15deg; }
+        .project-feature[data-position="1"] { --offset: var(--inner-offset); --angle: 15deg; }
+        .project-feature[data-position="-2"], .project-feature[data-position="2"] {
+            --height-offset: 76px;
+            --shrink: .83;
+            --depth: 1;
         }
-        .project-aside { display: flex; flex-direction: column; align-items: flex-end; justify-content: space-between; text-align: right; }
-        .project-cat { color: var(--text-dim); font-family: var(--font-mono); font-size: 10px; line-height: 1.55; }
-        .project-status { color: var(--accent); font-family: var(--font-mono); font-size: 9px; letter-spacing: 1.4px; text-transform: uppercase; }
-        .project-arrow {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 50%;
-            font-size: 18px;
-            color: var(--text);
-            transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1), color 0.3s, border-color 0.3s, background 0.3s;
+        .project-feature[data-position="-2"] { --offset: calc(-1 * var(--outer-offset)); --angle: -24deg; }
+        .project-feature[data-position="2"] { --offset: var(--outer-offset); --angle: 24deg; }
+        .project-carousel.is-stacked .project-feature:not([data-position="0"]) {
+            visibility: hidden;
         }
-        .project-item:hover .project-arrow { transform: translateX(5px); color: var(--accent); border-color: var(--accent); background: rgba(52, 152, 219, 0.09); }
-        @media (min-width: 769px) and (max-width: 1180px) {
-            .work { padding-block: 100px; }
-            .project-list { margin-top: 42px; }
-            .project-item { grid-template-columns: 58px minmax(0, 1fr) 150px; gap: 22px; }
-            .project-item h2 { font-size: clamp(30px, 5vw, 56px); }
-            .project-cat { font-size: 10px; line-height: 1.45; }
+        .project-carousel.is-entering .project-feature:not([data-position="0"]) {
+            animation: project-fan-in .72s cubic-bezier(.22,1,.36,1) .16s both;
         }
-
-        /* FIX: project preview follows cursor properly */
-        .project-img-reveal {
-            position: fixed;
-            width: 340px;
-            height: 210px;
-            top: 0; left: 0;
+        .project-carousel.is-entering .project-feature:is([data-position="-2"], [data-position="2"]) {
+            animation-delay: .31s;
+        }
+        @keyframes project-fan-in {
+            from { opacity: 0; transform: translate(-50%, 5px) scale(.87); }
+            to { opacity: 1; transform: var(--card-transform); }
+        }
+        .project-feature:hover, .project-feature:focus-within {
+            border-color: var(--card-active-outline, var(--accent));
+        }
+        .project-feature-media {
+            display: grid;
+            place-items: center;
+            width: 100%;
+            height: clamp(104px, 33vw, 164px);
+            margin: 0 auto 14px;
+            flex: 0 0 auto;
+            padding: 5px;
+            border: 1px solid rgba(255,255,255,.12);
+            border-radius: 7px;
+            background: var(--project-gradient);
+        }
+        .project-feature-media img {
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            object-fit: contain;
             pointer-events: none;
-            z-index: 900;
-            overflow: hidden;
-            opacity: 0;
-            transform: scale(0.88) rotate(-1deg);
-            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            border-radius: 2px;
         }
-        .project-img-reveal.visible {
-            opacity: 0.9;
-            transform: scale(1) rotate(0deg);
+        .project-feature-copy { margin: auto 0; min-width: 0; }
+        .project-feature h2 {
+            font-size: clamp(18px, 4.5vw, 26px);
+            line-height: 1.15;
+            color: var(--text);
+            overflow-wrap: anywhere;
         }
-        .project-img-reveal.has-image::before {
+        .project-feature button {
+            color: inherit;
+            font: inherit;
+            text-align: left;
+            border: 0;
+            background: transparent;
+        }
+        .project-feature button::after {
             content: '';
             position: absolute;
             inset: 0;
-            background: rgba(0, 0, 0, 0.35);
-            z-index: 1;
+            border-radius: 14px;
+            cursor: pointer !important;
         }
-        .project-img-reveal-inner {
-            width: 100%; height: 100%;
+        .project-feature button:focus-visible { outline: none; }
+        .project-feature button:focus-visible::after { box-shadow: inset 0 0 0 2px var(--accent); }
+        .project-feature .project-summary {
+            margin-top: 7px;
+            color: var(--text-dim);
+            font-size: clamp(12px, 3.2vw, 14px);
+            line-height: 1.45;
+        }
+        .project-feature-stack {
             display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 12px;
+            padding: 0;
+            list-style: none;
+        }
+        .project-feature-stack li {
+            padding: 3px 6px;
+            border: 1px solid rgba(255,255,255,.16);
+            border-radius: 4px;
+            color: var(--text);
+            font: 10px/1.25 var(--font-mono);
+        }
+        .project-carousel-controls {
+            display: flex;
             justify-content: center;
-            font-family: var(--font-mono);
-            font-size: 11px;
-            letter-spacing: 4px;
-            color: rgba(255,255,255,0.35);
-            text-transform: uppercase;
-            position: relative;
-            z-index: 2;
+            align-items: center;
+            gap: 7px;
+            margin-top: 3px;
+        }
+        .project-carousel-controls[hidden], .project-control[hidden] { display: none; }
+        .project-control {
+            min-width: 44px;
+            min-height: 44px;
+            padding: 0 11px;
+            border: 1px solid rgba(255,255,255,.17);
+            border-radius: 5px;
+            background: rgba(255,255,255,.025);
+            color: var(--text);
+            cursor: pointer !important;
+            font: 11px var(--font-mono);
+        }
+        .project-control:hover, .project-control:focus-visible {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+        .project-count {
+            min-width: 51px;
+            color: var(--text-dim);
+            text-align: center;
+            font: 11px var(--font-mono);
+            font-variant-numeric: tabular-nums;
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .project-feature { transition: none; }
+            .project-carousel.is-entering .project-feature:not([data-position="0"]) { animation: none; }
         }
 
         /* --- PROJECT GENERATIVE FALLBACKS --- */
@@ -1131,14 +1125,13 @@
             top: 104px;
             min-width: 0;
         }
-        .detail-visual-column::before {
-            content: 'PROJECT VISUAL';
-            display: block;
+        .detail-visual-label {
             margin-bottom: 12px;
             color: var(--accent);
             font-family: var(--font-mono);
             font-size: 9px;
             letter-spacing: 2px;
+            text-transform: uppercase;
         }
         .detail-visual-column .detail-img-placeholder {
             box-shadow: 0 28px 90px rgba(0,0,0,0.42);
@@ -1236,21 +1229,6 @@
             /* Sections */
             section { padding: 80px 24px; min-height: auto; }
 
-            /* Projects */
-            .project-item {
-                min-height: 0;
-                grid-template-columns: 42px minmax(0, 1fr);
-                padding: 24px 20px;
-                gap: 14px;
-            }
-            .project-aside { display: none; }
-            .project-item h2 { font-size: clamp(28px, 10vw, 46px); }
-            .project-eyebrow { margin-bottom: 10px; font-size: 8px; letter-spacing: 1.5px; }
-            .project-summary { margin-top: 12px; font-size: 12px; }
-            .project-stack-preview { margin-top: 14px; }
-            .project-index { justify-content: flex-start; gap: 8px; }
-            .project-img-reveal { display: none; }
-
             /* Capabilities */
             .caps-grid { grid-template-columns: 1fr; gap: 16px; margin-top: 50px; }
             .cap-card { padding: 28px; }
@@ -1288,344 +1266,94 @@
 
         @media (max-width: 480px) {
             .caps-grid { margin-top: 36px; }
-            .project-list { margin-top: 50px; }
             .tech-groups { grid-template-columns: 1fr; }
         }
 
-        /* --- REALISTIC BLACK CAT MASCOT ("NEX") --- */
+        /* --- NEX --- */
         .cyber-cat-container {
             position: absolute;
-            bottom: 32px;
-            left: 42px;
-            width: 96px;
-            height: 108px;
-            z-index: 100;
-            pointer-events: auto;
+            bottom: clamp(14px, 3vh, 32px);
+            left: 4vw;
+            width: clamp(81px, min(10vw, 15vh), 117px);
+            z-index: 5;
+            display: block;
+            padding: 0;
+            border: 0;
+            border-radius: 38% 42% 22% 25%;
+            background: transparent;
             cursor: pointer !important;
-            user-select: none;
-            opacity: 0;
-            transform: translate3d(0, 0, 0);
-            transition: opacity 0.5s ease;
+            -webkit-tap-highlight-color: transparent;
         }
-        .cyber-cat-container.visible { opacity: 1; }
-        .cyber-cat-body-wrap {
+        .cyber-cat-container:focus-visible {
+            outline: 1px solid var(--accent);
+            outline-offset: 5px;
+        }
+        .cyber-cat-container::before {
+            content: '';
+            position: absolute;
+            inset: auto 2% -2% 2%;
+            height: 12%;
+            background: radial-gradient(ellipse, rgba(0,0,0,.7), transparent 70%);
+            pointer-events: none;
+        }
+        .cat-portrait {
+            position: relative;
+            display: block;
+            transform-origin: 41% 97%;
+            animation: cat-breathe 4.4s ease-in-out infinite;
+        }
+        .cat-portrait img {
+            display: block;
+            width: 100%;
+            height: auto;
+            pointer-events: none;
+            user-select: none;
+        }
+        .cat-motion,
+        .cat-eyelids {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
-            transform-origin: center bottom;
-            transition: transform 0.25s cubic-bezier(0.23, 1, 0.32, 1);
+            pointer-events: none;
         }
-        .cyber-cat-container.is-flipped .cyber-cat-body-wrap {
-            transform: scaleX(-1);
-        }
-
-        /* Crouch State */
-        .cyber-cat-container.is-crouching .cyber-cat-body-wrap {
-            transform: scaleY(0.85) translateY(6px);
-        }
-        .cyber-cat-container.is-crouching .cat-ear-left { transform: rotate(-12deg); }
-        .cyber-cat-container.is-crouching .cat-ear-right { transform: rotate(12deg); }
-        .cyber-cat-container.is-crouching .cat-whiskers {
-            animation: whiskerTwitch 0.9s ease-in-out infinite;
-        }
-
-        /* The side-on runner is retained as markup but never shown; Nex remains seated. */
-        .cat-runner { display: none; }
-
-        /* Retreat (single natural bound away when approached too closely — not a repeating loop) */
-        .cyber-cat-container.is-retreating .cyber-cat-body-wrap {
-            animation: catSingleBound 0.5s cubic-bezier(0.33, 0, 0.2, 1) 1;
-        }
-        .cyber-cat-container.is-retreating .cat-ear-left,
-        .cyber-cat-container.is-retreating .cat-ear-right {
-            transform: rotate(-10deg);
-            transition: transform 0.18s ease-out;
-        }
-        .cyber-cat-container.is-retreating .cat-tail {
-            animation: catTailRun 0.4s ease-in-out 1;
-        }
-
-        /* Idle State, Breathing & Eye Blink */
-        .cyber-cat-container.is-idle .cat-tail {
-            animation: catTailIdle 4.5s ease-in-out infinite;
-        }
-        .cyber-cat-container.is-idle .cat-body-main,
-        .cyber-cat-container.is-crouching .cat-body-main {
-            transform-origin: 60px 96px;
-            animation: catBreathe 3.4s ease-in-out infinite;
-        }
-        .cat-eye-bg, .cat-pupil {
+        .cat-portrait.is-animated img { visibility: hidden; }
+        .cat-lid {
+            opacity: 0;
+            transform-box: fill-box;
             transform-origin: center;
-            transition: transform 0.1s ease-out, opacity 0.35s ease;
+            animation: cat-blink 8.3s linear infinite;
         }
-        .cat-eyelid {
-            transform-origin: center top;
-            transform: scaleY(0);
-            transition: transform 0.32s cubic-bezier(0.33, 1, 0.68, 1);
+        .cyber-cat-container.is-petted .cat-lid {
+            animation: cat-slow-blink 860ms ease-in-out both;
         }
-        .cyber-cat-container.is-blinking .cat-eyelid {
-            transform: scaleY(1);
-            transition: transform 0.05s ease-out;
-        }
-        .cyber-cat-container.is-slow-blinking .cat-eyelid {
-            transform: scaleY(1);
-            transition: transform 0.32s ease-in-out;
-        }
-
-        /* Grooming Animation (random idle behavior) — single paw wipes the face */
-        .cat-paw-groom {
-            transform-origin: 44px 118px;
-            transform: rotate(0deg);
-        }
-        .cyber-cat-container.is-grooming .cat-paw-groom {
-            animation: catGroomingPaw 0.55s ease-in-out infinite alternate;
-        }
-        .cyber-cat-container.is-grooming .cat-head-group {
-            transform: rotate(10deg) translate(-2px, 3px);
-        }
-
-        /* Yawning Animation (random idle behavior) */
-        .cat-mouth-open { opacity: 0; transition: opacity 0.15s ease; }
-        .cat-mouth-closed { opacity: 1; transition: opacity 0.15s ease; }
-        .cyber-cat-container.is-yawning .cat-mouth-open { opacity: 1; }
-        .cyber-cat-container.is-yawning .cat-mouth-closed { opacity: 0; }
-        .cyber-cat-container.is-yawning .cat-head-group {
-            animation: catYawnTilt 0.9s ease-in-out;
-        }
-
-        /* Stretch Animation (random idle behavior) — paws reach up, body elongates */
-        .cyber-cat-container.is-stretching .cyber-cat-body-wrap {
-            animation: catStretch 1.15s ease-in-out;
-        }
-        .cat-paw-left, .cat-paw-right {
-            transform-origin: 60px 112px;
-        }
-        .cyber-cat-container.is-stretching .cat-paw-left {
-            animation: catPawStretchLeft 1.15s ease-in-out;
-        }
-        .cyber-cat-container.is-stretching .cat-paw-right {
-            animation: catPawStretchRight 1.15s ease-in-out;
-        }
-
-        /* Ear Twitch (random idle behavior) */
-        .cat-ear-left { transform-origin: 33px 44px; transition: transform 0.4s cubic-bezier(0.33, 1, 0.68, 1); }
-        .cat-ear-right { transform-origin: 87px 44px; transition: transform 0.4s cubic-bezier(0.33, 1, 0.68, 1); }
-        .cyber-cat-container.is-twitching-left .cat-ear-left {
-            animation: earTwitch 0.35s ease-in-out;
-        }
-        .cyber-cat-container.is-twitching-right .cat-ear-right {
-            animation: earTwitch 0.35s ease-in-out;
-        }
-
-        /* Purring / Petting Reaction */
-        .cyber-cat-container.is-purring .cyber-cat-svg {
-            animation: catPurr 0.16s ease-in-out infinite, catPurrGlow 1.4s ease-in-out infinite;
-        }
-        .cyber-cat-container.is-purring .cat-eyelid {
-            transform: scaleY(1);
-            transition: transform 0.42s cubic-bezier(0.33, 1, 0.68, 1);
-        }
-        .cyber-cat-container.is-purring .cat-pupil {
-            opacity: 0.35;
-            transition: opacity 0.35s ease;
-        }
-
-        /* Sleeping State */
-        .cyber-cat-container.is-sleeping .cyber-cat-body-wrap {
-            transform: scaleY(0.88) translateY(6px);
-            animation: catSleepBreathe 3.8s ease-in-out infinite;
-        }
-        .cyber-cat-container.is-sleeping .cat-eyelid { transform: scaleY(1); }
-        .cyber-cat-container.is-sleeping .cat-head-group { transform: translateY(6px) rotate(-3deg); }
-        .cyber-cat-container.is-sleeping .cat-ear-left { transform: rotate(-14deg); }
-        .cyber-cat-container.is-sleeping .cat-ear-right { transform: rotate(14deg); }
-        .cat-zzz { opacity: 0; transition: opacity 0.4s ease; }
-        .cyber-cat-container.is-sleeping .cat-zzz { opacity: 1; }
-        .cat-zzz text {
-            opacity: 0;
-            animation: zzzFloat 2.6s ease-in-out infinite;
-        }
-        .cat-zzz text:nth-child(2) { animation-delay: 0.5s; }
-        .cat-zzz text:nth-child(3) { animation-delay: 1s; }
-
-        /* Heart particles (petting reward) */
-        .cat-heart-particle {
-            position: absolute;
-            bottom: 48%;
-            left: 50%;
-            font-size: 11px;
-            line-height: 1;
-            color: #ff6b81;
-            text-shadow: 0 0 4px rgba(255, 107, 129, 0.8);
-            pointer-events: none;
-            z-index: 101;
-            animation: heartFloat 1.15s ease-out forwards;
-        }
-
-        .cyber-cat-status {
-            position: absolute;
-            top: -22px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: var(--font-mono);
-            font-size: 8px;
-            letter-spacing: 1.5px;
-            color: #ffd166;
-            background: rgba(5, 5, 5, 0.92);
-            border: 1px solid rgba(243, 156, 18, 0.5);
-            padding: 2px 8px;
-            white-space: nowrap;
-            pointer-events: none;
-            opacity: 0;
-            border-radius: 2px;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            box-shadow: 0 0 12px rgba(243, 156, 18, 0.25);
-        }
-        .cyber-cat-status.visible {
+        .cyber-cat-container.is-sleeping .cat-portrait { animation-duration: 6.5s; }
+        .cyber-cat-container.is-sleeping .cat-lid {
+            animation: none;
             opacity: 1;
-            transform: translateX(-50%) translateY(-4px);
+            transition: opacity 500ms ease;
         }
-
-        /* --- CYBER BUTTERFLY --- */
-        .cyber-butterfly {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            pointer-events: none;
-            z-index: 95;
-            opacity: 0;
-            transform: translate3d(0, 0, 0);
+        @keyframes cat-breathe {
+            0%, 100% { transform: scale(1); }
+            48% { transform: scale(1.012, 1.018) skewX(-.35deg); }
         }
-        .cyber-butterfly.visible { opacity: 1; }
-        .cyber-butterfly .bf-left {
-            transform-origin: 12px 12px;
-            animation: bfWingFlap 0.18s ease-in-out infinite alternate;
+        @keyframes cat-blink {
+            0%, 27%, 30%, 72%, 75%, 100% { opacity: 0; transform: scaleY(.55); }
+            28%, 29%, 73%, 74% { opacity: 1; transform: scaleY(1); }
         }
-        .cyber-butterfly .bf-right {
-            transform-origin: 12px 12px;
-            animation: bfWingFlap 0.18s ease-in-out infinite alternate-reverse;
+        @keyframes cat-slow-blink {
+            0%, 100% { opacity: 0; transform: scaleY(.55); }
+            32%, 67% { opacity: 1; transform: scaleY(1); }
         }
-
-        @keyframes catHop {
-            0% { transform: translateY(0) scaleY(1); }
-            35% { transform: translateY(-9px) scaleY(1.05); }
-            55% { transform: translateY(-9px) scaleY(0.98); }
-            100% { transform: translateY(0) scaleY(0.94); }
+        @media (max-width: 768px) {
+            .cyber-cat-container { width: clamp(51px, 15vw, 80px); }
         }
-        @keyframes catRunBounce {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            26% { transform: translateY(-4px) rotate(-1deg); }
-            52% { transform: translateY(-7px) rotate(0.8deg); }
-            76% { transform: translateY(-2px) rotate(-0.4deg); }
-        }
-        @keyframes catRunnerBody {
-            0%, 100% { transform: scaleX(0.98) scaleY(1.02); }
-            50% { transform: scaleX(1.05) scaleY(0.96); }
-        }
-        @keyframes catRunnerHead {
-            0%, 100% { transform: translateY(0) rotate(1deg); }
-            50% { transform: translateY(2px) rotate(-2deg); }
-        }
-        @keyframes catRunnerTail {
-            0%, 100% { transform: rotate(-15deg); }
-            50% { transform: rotate(18deg); }
-        }
-        @keyframes catRunnerLegA {
-            0%, 100% { transform: rotate(-30deg) translateY(0); }
-            50% { transform: rotate(31deg) translateY(-1px); }
-        }
-        @keyframes catRunnerLegB {
-            0%, 100% { transform: rotate(31deg) translateY(-1px); }
-            50% { transform: rotate(-30deg) translateY(0); }
-        }
-        @keyframes catRunnerEar {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-4deg); }
-        }
-        @keyframes catSingleBound {
-            0% { transform: translateY(0) scaleY(1); }
-            40% { transform: translateY(-7px) scaleY(1.04); }
-            70% { transform: translateY(-2px) scaleY(0.97); }
-            100% { transform: translateY(0) scaleY(1); }
-        }
-        @keyframes catEarFlap {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-6deg); }
-        }
-        @keyframes catTailRun {
-            0% { transform: rotate(-10deg); transform-origin: 51px 90px; }
-            100% { transform: rotate(14deg); transform-origin: 51px 90px; }
-        }
-        @keyframes catTailIdle {
-            0%, 75%, 100% { transform: rotate(0deg); transform-origin: 51px 90px; }
-            80% { transform: rotate(-8deg); transform-origin: 51px 90px; }
-            90% { transform: rotate(6deg); transform-origin: 51px 90px; }
-        }
-        @keyframes catGroomingPaw {
-            0% { transform: rotate(0deg) translateY(0); }
-            100% { transform: rotate(-42deg) translateY(-14px); }
-        }
-        @keyframes catBreathe {
-            0%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(1.025); }
-        }
-        @keyframes catYawnTilt {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            35% { transform: rotate(-6deg) translateY(3px); }
-            65% { transform: rotate(-3deg) translateY(2px); }
-        }
-        @keyframes catStretch {
-            0% { transform: scaleX(1) scaleY(1) translateY(0); }
-            45% { transform: scaleX(1.08) scaleY(1.12) translateY(-6px); }
-            100% { transform: scaleX(1) scaleY(1) translateY(0); }
-        }
-        @keyframes catPawStretchLeft {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            45% { transform: rotate(-24deg) translateY(-10px); }
-        }
-        @keyframes catPawStretchRight {
-            0%, 100% { transform: rotate(0deg) translateY(0); }
-            45% { transform: rotate(24deg) translateY(-10px); }
-        }
-        @keyframes earTwitch {
-            0%, 100% { transform: rotate(0deg); }
-            50% { transform: rotate(-16deg); }
-        }
-        @keyframes catPurr {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-0.8px); }
-        }
-        @keyframes catPurrGlow {
-            0%, 100% { filter: drop-shadow(0 0 0px rgba(243, 156, 18, 0)); }
-            50% { filter: drop-shadow(0 0 2.5px rgba(243, 156, 18, 0.28)); }
-        }
-        @keyframes catSleepBreathe {
-            0%, 100% { transform: scaleY(0.88) translateY(6px); }
-            50% { transform: scaleY(0.92) translateY(5px); }
-        }
-        @keyframes zzzFloat {
-            0% { opacity: 0; transform: translateY(0) scale(0.6); }
-            25% { opacity: 1; }
-            100% { opacity: 0; transform: translateY(-14px) scale(1.15); }
-        }
-        @keyframes heartFloat {
-            0% { opacity: 0; transform: translate(-50%, 0) scale(0.5); }
-            20% { opacity: 1; }
-            100% { opacity: 0; transform: translate(calc(-50% + var(--drift, 10px)), -40px) scale(1.15); }
-        }
-        @keyframes whiskerTwitch {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(0.6px); }
-        }
-        @keyframes bfWingFlap {
-            0% { transform: scaleX(1); }
-            100% { transform: scaleX(0.2); }
+        @media (max-height: 560px) {
+            .cyber-cat-container { width: clamp(42px, 10vh, 65px); bottom: 10px; }
         }
         @media (prefers-reduced-motion: reduce) {
-            .cyber-cat-container *, .cyber-cat-container *::after,
-            .cyber-butterfly *, .cyber-butterfly *::after {
-                animation: none !important;
-                transition: none !important;
-            }
+            .cat-portrait, .cat-lid,
+            .cyber-cat-container.is-petted .cat-lid { animation: none; }
         }
     </style>
 </head>
@@ -1647,9 +1375,6 @@
     </div>
 
     <!-- Project hover preview (follows cursor on desktop) -->
-    <div class="project-img-reveal" id="project-preview">
-        <div class="project-img-reveal-inner" id="preview-label"></div>
-    </div>
 
     <!-- Mobile Nav Overlay -->
     <div class="mobile-nav" id="mobile-nav">
@@ -1690,190 +1415,34 @@
             </div>
             <div class="hero-sub hero-status">BASED IN KERALA, INDIA</div>
 
-            <!-- REALISTIC BLACK CAT MASCOT ("NEX") -->
-            <div id="cyber-cat-container" class="cyber-cat-container" aria-hidden="true" title="Nex — Cyber Mascot">
-                <div class="cyber-cat-status" id="cyber-cat-status">NEX // ONLINE</div>
-                <div class="cyber-cat-body-wrap" id="cyber-cat-body-wrap">
-                    <svg class="cyber-cat-svg" viewBox="0 0 120 132" width="96" height="108">
+            <button type="button" class="cyber-cat-container" id="cyber-cat-container" aria-label="Pet Nex the cat">
+                <span class="cat-portrait">
+                    <img src="assets/nex-cartoon.webp" width="360" height="426" alt="" draggable="false">
+                    <canvas class="cat-motion" width="360" height="426" aria-hidden="true" hidden></canvas>
+                    <svg class="cat-eyelids" viewBox="100 0 1080 1278" aria-hidden="true">
                         <defs>
-                            <radialGradient id="catEyeGlow" cx="42%" cy="38%" r="65%">
-                                <stop offset="0%" stop-color="#ffe9a8"/>
-                                <stop offset="45%" stop-color="#f5a623"/>
-                                <stop offset="100%" stop-color="#b85c0a"/>
-                            </radialGradient>
-                            <linearGradient id="furGrad" x1="0%" y1="0%" x2="30%" y2="100%">
-                                <stop offset="0%" stop-color="#2c2f3d"/>
-                                <stop offset="45%" stop-color="#15161d"/>
-                                <stop offset="100%" stop-color="#06060a"/>
+                            <linearGradient id="nex-eyelid" x2="0" y2="1">
+                                <stop stop-color="#242227"/>
+                                <stop offset=".52" stop-color="#38343a"/>
+                                <stop offset="1" stop-color="#2d292e"/>
                             </linearGradient>
-                            <linearGradient id="furGradEar" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#333645"/>
-                                <stop offset="100%" stop-color="#0a0a0f"/>
-                            </linearGradient>
-                            <filter id="eyeShadow" x="-30%" y="-30%" width="160%" height="160%">
-                                <feDropShadow dx="0" dy="0" stdDeviation="1.4" flood-color="#f5a623" flood-opacity="0.75"/>
-                            </filter>
-                            <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
-                                <feGaussianBlur stdDeviation="2.2"/>
-                            </filter>
                         </defs>
-
-                        <g class="cat-resting-pose">
-                        <!-- Sleep Indicator -->
-                        <g class="cat-zzz" id="cat-zzz">
-                            <text x="90" y="10" font-size="7" font-family="'JetBrains Mono', monospace" fill="#ffd166">z</text>
-                            <text x="97" y="2" font-size="9" font-family="'JetBrains Mono', monospace" fill="#ffd166">Z</text>
-                            <text x="105" y="-8" font-size="11" font-family="'JetBrains Mono', monospace" fill="#ffd166">Z</text>
+                        <g class="cat-lid">
+                            <path d="M312 368 C313 302 389 299 417 345 Q446 386 433 429 C376 433 322 420 312 368Z" fill="url(#nex-eyelid)"/>
+                            <path d="M318 374 Q356 414 429 417" fill="none" stroke="#151418" stroke-width="7" stroke-linecap="round"/>
                         </g>
-
-                        <!-- Ground shadow -->
-                        <ellipse cx="60" cy="128" rx="36" ry="5.5" fill="#000000" opacity="0.32" filter="url(#softShadow)"/>
-
-                        <!-- Body: rounded sitting silhouette with paws -->
-                        <g class="cat-body-main">
-                            <path d="M 33 88 C 20 96, 13 112, 18 128 L 102 128 C 107 112, 100 96, 87 88 C 82 104, 74 114, 60 114 C 46 114, 38 104, 33 88 Z"
-                                  fill="url(#furGrad)" stroke="rgba(255,255,255,0.1)" stroke-width="0.6"/>
-                            <!-- lighter chest fur -->
-                            <path d="M 48 92 C 44 102, 46 113, 55 118 C 50 108, 50 99, 53 91 Z" fill="#3a3e50" opacity="0.35"/>
-                            <!-- subtle fur strand texture on body -->
-                            <path d="M 30 104 Q 33 107, 31 111 M 36 112 Q 39 116, 36 120 M 84 104 Q 81 107, 83 111 M 90 112 Q 87 116, 90 120"
-                                  stroke="rgba(255,255,255,0.07)" stroke-width="0.6" fill="none"/>
-                        </g>
-
-                        <!-- Tail: sweeps from behind the left hip and curls into a tapered hook in front -->
-                        <path class="cat-tail" d="M 51 82 C 24 75, 3 92, 9 115 C 12 128, 28 132, 37 122 C 27 119, 20 107, 27 98 C 33 90, 42 88, 51 97 Z"
-                              fill="url(#furGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
-                        <path d="M 34 100 C 29 105, 28 112, 32 118" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="1.2" stroke-linecap="round"/>
-
-                        <!-- Paws -->
-                        <g class="cat-paw cat-paw-left">
-                            <ellipse cx="45" cy="124" rx="11" ry="7.5" fill="#101119" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
-                            <path d="M 38 121 L 38 125 M 43 122.5 L 43 126.5 M 48 122.5 L 48 126.5" stroke="rgba(255,255,255,0.15)" stroke-width="0.6"/>
-                        </g>
-                        <g class="cat-paw cat-paw-right cat-paw-groom">
-                            <ellipse cx="75" cy="124" rx="11" ry="7.5" fill="#0d0e15" stroke="rgba(255,255,255,0.12)" stroke-width="0.5"/>
-                            <path d="M 68 122.5 L 68 126.5 M 73 122.5 L 73 126.5 M 78 121 L 78 125" stroke="rgba(255,255,255,0.15)" stroke-width="0.6"/>
-                        </g>
-
-                        <!-- Head Group (Ears, Fur Fringe, Eyes, Nose, Mouth & Whiskers) -->
-                        <g class="cat-head-group" id="cat-head-group">
-                            <!-- Left Ear (jagged fluffy fur edge) -->
-                            <g class="cat-ear cat-ear-left">
-                                <path d="M 32 6 L 24 18 L 28 20 L 20 33 L 25 35 L 18 46 L 47 39 Z" fill="url(#furGradEar)" stroke="rgba(255,255,255,0.15)" stroke-width="0.6"/>
-                                <path d="M 31 17 L 23 36 L 42 33 Z" fill="#181a24"/>
-                                <path d="M 31 17 L 23 36 L 42 33 Z" fill="#000000" opacity="0.35"/>
-                            </g>
-                            <!-- Right Ear (jagged fluffy fur edge) -->
-                            <g class="cat-ear cat-ear-right">
-                                <path d="M 88 6 L 96 18 L 92 20 L 100 33 L 95 35 L 102 46 L 73 39 Z" fill="url(#furGradEar)" stroke="rgba(255,255,255,0.15)" stroke-width="0.6"/>
-                                <path d="M 89 17 L 97 36 L 78 33 Z" fill="#181a24"/>
-                                <path d="M 89 17 L 97 36 L 78 33 Z" fill="#000000" opacity="0.35"/>
-                            </g>
-
-                            <!-- Head: jagged fringe across forehead + smooth cheeks/jaw -->
-                            <path d="M 47 39 L 51 25 L 55 35 L 59 21 L 63 33 L 67 21 L 71 35 L 75 25 L 73 39
-                                     C 92 45, 96 68, 87 84 C 81 96, 68 102, 60 102 C 52 102, 39 96, 33 84
-                                     C 24 68, 28 45, 47 39 Z"
-                                  fill="url(#furGrad)" stroke="rgba(255,255,255,0.12)" stroke-width="0.6"/>
-
-                            <!-- Cheek fur tufts -->
-                            <path d="M 30 62 L 22 65 L 30 70 L 25 74 L 33 76 Z" fill="#0e0f16"/>
-                            <path d="M 90 62 L 98 65 L 90 70 L 95 74 L 87 76 Z" fill="#0e0f16"/>
-
-                            <!-- Brow shading for a focused expression -->
-                            <path d="M 36 54 Q 46 47 57 53" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="2" stroke-linecap="round"/>
-                            <path d="M 84 54 Q 74 47 63 53" fill="none" stroke="rgba(0,0,0,0.5)" stroke-width="2" stroke-linecap="round"/>
-
-                            <!-- Whiskers -->
-                            <g class="cat-whiskers">
-                                <path d="M 48 80 L 22 75 M 47 84 L 20 84 M 48 88 L 23 93" stroke="rgba(255,255,255,0.4)" stroke-width="0.7" stroke-linecap="round"/>
-                                <path d="M 72 80 L 98 75 M 73 84 L 100 84 M 72 88 L 97 93" stroke="rgba(255,255,255,0.4)" stroke-width="0.7" stroke-linecap="round"/>
-                            </g>
-
-                            <!-- Amber Eyes & Tracking Pupils -->
-                            <g class="cat-eye-wrap">
-                                <ellipse cx="46" cy="63" rx="10.5" ry="12.5" fill="url(#catEyeGlow)" filter="url(#eyeShadow)" class="cat-eye-bg"/>
-                                <ellipse cx="46" cy="65" rx="4.2" ry="8.5" fill="#180a02" class="cat-pupil" id="cat-pupil-left"/>
-                                <circle cx="49.5" cy="58" r="2.4" fill="#ffffff" opacity="0.95"/>
-                                <circle cx="43" cy="68" r="1.1" fill="#ffffff" opacity="0.55"/>
-                                <path d="M 35.5 63 Q 46 53 56.5 63 L 56.5 64 Q 46 55 35.5 64 Z" fill="#0a0a0f" opacity="0.9"/>
-                                <ellipse class="cat-eyelid" cx="46" cy="55" rx="11" ry="8" fill="#100f19"/>
-                            </g>
-                            <g class="cat-eye-wrap">
-                                <ellipse cx="74" cy="63" rx="10.5" ry="12.5" fill="url(#catEyeGlow)" filter="url(#eyeShadow)" class="cat-eye-bg"/>
-                                <ellipse cx="74" cy="65" rx="4.2" ry="8.5" fill="#180a02" class="cat-pupil" id="cat-pupil-right"/>
-                                <circle cx="77.5" cy="58" r="2.4" fill="#ffffff" opacity="0.95"/>
-                                <circle cx="71" cy="68" r="1.1" fill="#ffffff" opacity="0.55"/>
-                                <path d="M 63.5 63 Q 74 53 84.5 63 L 84.5 64 Q 74 55 63.5 64 Z" fill="#0a0a0f" opacity="0.9"/>
-                                <ellipse class="cat-eyelid" cx="74" cy="55" rx="11" ry="8" fill="#100f19"/>
-                            </g>
-
-                            <!-- Nose -->
-                            <path d="M 60 79 L 56 85 L 64 85 Z" fill="#d97a45" opacity="0.92"/>
-
-                            <!-- Mouth: closed (default) & open (yawn) -->
-                            <path class="cat-mouth-closed" d="M 60 85 L 60 89 M 60 89 Q 55 93 49 91 M 60 89 Q 65 93 71 91" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round"/>
-                            <ellipse class="cat-mouth-open" cx="60" cy="92" rx="5.5" ry="6.5" fill="#3a1410" stroke="rgba(255,255,255,0.25)" stroke-width="0.6"/>
-                        </g>
-                        </g>
-
-                        <!-- A compact side-on run cycle. The four legs alternate in diagonal pairs,
-                             while the tail counterbalances the body and the head settles on impact. -->
-                        <g class="cat-runner" aria-hidden="true">
-                            <ellipse cx="61" cy="125" rx="51" ry="4.5" fill="#000" opacity="0.3" filter="url(#softShadow)"/>
-                            <path class="cat-runner-tail" d="M 38 91 C 20 78, 7 83, 8 61 C 8 49, 17 43, 23 50 C 16 52, 16 62, 22 68 C 27 74, 35 75, 43 78"
-                                  fill="none" stroke="url(#furGrad)" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
-                            <!-- Far legs sit behind the body and use a softer fill to create depth. -->
-                            <g class="cat-run-leg phase-b" opacity="0.66">
-                                <path d="M 45 101 C 40 110, 35 116, 28 121" fill="none" stroke="#141620" stroke-width="9" stroke-linecap="round"/>
-                                <ellipse cx="27" cy="122" rx="9" ry="3.8" fill="#101119"/>
-                            </g>
-                            <g class="cat-run-leg phase-a" opacity="0.66">
-                                <path d="M 72 102 C 77 110, 83 115, 92 118" fill="none" stroke="#141620" stroke-width="8.5" stroke-linecap="round"/>
-                                <ellipse cx="93" cy="119" rx="9" ry="3.8" fill="#101119"/>
-                            </g>
-                            <g class="cat-runner-body">
-                                <path d="M 34 80 C 42 68, 66 66, 82 76 C 92 83, 91 101, 81 108 C 67 116, 43 112, 32 101 C 26 95, 28 86, 34 80 Z"
-                                      fill="url(#furGrad)" stroke="rgba(255,255,255,0.13)" stroke-width="0.7"/>
-                                <path d="M 40 86 C 51 78, 68 78, 78 84" fill="none" stroke="rgba(255,255,255,0.09)" stroke-width="1.2" stroke-linecap="round"/>
-                                <path d="M 39 101 C 51 108, 68 109, 79 102" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
-                            </g>
-                            <!-- Near legs draw over the torso so the stride reads clearly. -->
-                            <g class="cat-run-leg phase-a">
-                                <path d="M 45 99 C 47 109, 54 116, 65 120" fill="none" stroke="#1a1c27" stroke-width="10" stroke-linecap="round"/>
-                                <ellipse cx="66" cy="121" rx="9.5" ry="4.1" fill="#11121a"/>
-                            </g>
-                            <g class="cat-run-leg phase-b">
-                                <path d="M 74 99 C 70 110, 66 117, 57 122" fill="none" stroke="#1a1c27" stroke-width="9.5" stroke-linecap="round"/>
-                                <ellipse cx="56" cy="123" rx="9.5" ry="4.1" fill="#11121a"/>
-                            </g>
-                            <g class="cat-runner-head">
-                                <path d="M 75 72 L 77 49 L 89 65 L 101 50 L 102 75 C 112 81, 113 97, 102 104 C 91 112, 75 106, 72 94 C 69 84, 70 77, 75 72 Z"
-                                      fill="url(#furGrad)" stroke="rgba(255,255,255,0.15)" stroke-width="0.7"/>
-                                <path class="cat-runner-ear" d="M 77 67 L 79 52 L 88 67 Z" fill="#b85c0a" opacity="0.78"/>
-                                <path class="cat-runner-ear" d="M 92 67 L 100 53 L 100 72 Z" fill="#b85c0a" opacity="0.78"/>
-                                <ellipse cx="91" cy="83" rx="7.5" ry="8.5" fill="url(#catEyeGlow)" filter="url(#eyeShadow)"/>
-                                <ellipse cx="91" cy="85" rx="2.5" ry="5.6" fill="#180a02"/>
-                                <circle cx="94" cy="80" r="1.5" fill="#fff" opacity="0.9"/>
-                                <path d="M 103 89 L 109 92 L 103 95 Z" fill="#d97a45"/>
-                                <path d="M 102 95 L 111 99 M 102 97 L 110 103" stroke="rgba(255,255,255,0.35)" stroke-width="0.65" stroke-linecap="round"/>
-                            </g>
+                        <g class="cat-lid">
+                            <path d="M551 449 Q560 395 602 368 C648 342 698 371 691 417 C683 461 627 478 551 449Z" fill="url(#nex-eyelid)"/>
+                            <path d="M558 442 Q637 464 681 420" fill="none" stroke="#151418" stroke-width="7" stroke-linecap="round"/>
                         </g>
                     </svg>
-                </div>
-            </div>
+                </span>
+            </button>
         </section>
 
         <section class="work" id="work">
-            <div class="hero-sub">SELECTED PROJECTS</div>
-            <div class="project-list" id="project-list"></div>
-            <details class="project-more" id="project-more" hidden>
-                <summary>
-                    <span class="project-more-open">View all projects</span>
-                    <span class="project-more-close">Show fewer projects</span>
-                </summary>
-                <div class="project-list" id="additional-project-list"></div>
-            </details>
+            <div class="hero-sub" id="project-heading">PROJECTS</div>
+            <div class="project-carousel" id="all-projects" role="region" aria-labelledby="project-heading"></div>
         </section>
 
         <section class="about" id="about">
@@ -2018,6 +1587,7 @@
                     </div>
                 </div>
                 <div class="detail-visual-column">
+                    <div class="detail-visual-label" id="detail-visual-label">Project visual</div>
                     <div class="detail-img-placeholder" id="detail-img">
                         <span class="detail-img-label">[ PROJECT VISUAL ]</span>
                     </div>
@@ -2031,6 +1601,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.19/bundled/lenis.min.js"></script>
+    <script src="assets/nex-motion.js" defer></script>
 
     <script>
         // FIX: register plugin at top level, not inside a callback
@@ -2043,7 +1614,7 @@
             {
                 num: '01',
                 title: 'BRIDGE',
-                featured: true,
+                goldOutline: true,
                 summary: 'Share files, folders, and clipboard text across devices in encrypted, QR-paired rooms.',
                 category: 'Peer-to-Peer / File Sharing / WebRTC',
                 year: '2026',
@@ -2060,7 +1631,7 @@
             {
                 num: '02',
                 title: 'STEGOVAULT',
-                featured: true,
+                goldOutline: true,
                 summary: 'Encrypt and hide messages inside images, audio, or text using browser-based steganography tools.',
                 category: 'Cybersecurity / Cryptography / Steganography',
                 year: '2026',
@@ -2080,7 +1651,7 @@
             {
                 num: '03',
                 title: 'FORGE P2P',
-                featured: true,
+                goldOutline: true,
                 summary: 'Edit code and Markdown together in a browser workspace synchronized over WebRTC.',
                 category: 'Developer Tools / Real-Time Collaboration',
                 year: '2026',
@@ -2115,25 +1686,24 @@
             {
                 num: '05',
                 title: 'COMFORT MODE',
-                summary: 'An Android prototype that uses motion sensors to explore ways to reduce travel discomfort.',
+                summary: 'An Android concept for making phone use more comfortable during car rides.',
                 category: 'Android / Sensors / Human-Computer Interaction',
                 year: '2026',
                 role: 'Android Developer',
-                description: 'An Android concept designed to reduce motion discomfort during vehicle travel by using device motion sensors and contextual detection. The system explores accelerometer and gyroscope data, vehicle-motion detection, and a visual overlay that responds to movement in real time.',
+                description: 'The idea is to use a phone’s accelerometer and gyroscope to detect turns, braking, and acceleration during a car ride. Subtle dots at the edges of the screen would respond to that motion and give passengers a visual reference while they read or browse. Comfort Mode is currently in development.',
                 stack: ['Kotlin', 'Jetpack Compose', 'Android Sensors', 'WebSocket'],
-                status: 'Prototype / Development',
+                status: 'Work in progress',
                 gradient: 'linear-gradient(135deg, #0a0a12 0%, #151028 50%, #0a0818 100%)',
-                image: '',
+                image: 'assets/comfort-mode-concept.webp',
+                images: ['assets/comfort-mode-concept.webp'],
+                visualLabel: 'Concept illustration',
                 url: '',
                 github: ''
             }
         ];
 
-        const preview = document.getElementById('project-preview');
-        const previewLabel = document.getElementById('preview-label');
         const detailOverlay = document.getElementById('project-detail');
         const imageAvailability = new Map();
-        let previewVisualRequest = 0;
         let previousFocus = null;
 
         function checkProjectImage(imagePath) {
@@ -2206,7 +1776,7 @@
             el.style.backgroundRepeat = 'no-repeat';
         }
 
-        function setProjectVisual(el, proj, requestId) {
+        function setProjectVisual(el, proj) {
             const targetImg = proj.image || (Array.isArray(proj.images) && proj.images.length ? proj.images[0] : '');
             if (!targetImg) {
                 applyProjectGradient(el, proj);
@@ -2214,10 +1784,6 @@
             }
 
             return checkProjectImage(targetImg).then((available) => {
-                if (requestId !== undefined && requestId !== previewVisualRequest) {
-                    return available;
-                }
-
                 if (available) {
                     applyProjectImage(el, { ...proj, image: targetImg });
                 } else {
@@ -2228,715 +1794,147 @@
             });
         }
 
-        // ================================
-        // REALISTIC BLACK CAT MASCOT ("NEX") CONTROLLER
-        // ================================
-        const CyberCat = {
-            el: null,
-            bodyWrap: null,
-            statusEl: null,
-            headGroup: null,
-            pupilLeft: null,
-            pupilRight: null,
-            statusTimeout: null,
-            state: 'HIDDEN', // HIDDEN, HERO_ENTRY, IDLE, ESCAPING, CROUCHING, SLEEPING
-            x: 0,
-            y: 0,
-            isFlipped: false,
-            // Wary lines when the cursor first approaches (before full escape range)
-            waryLines: [
-                "NEX // NOTICED YOU",
-                "NEX // WATCHING",
-                "NEX // ALERT: LOW"
-            ],
-            lastNoticeTime: 0,
-            lastEscapeTime: 0,
-            lastActivityTime: 0,
-            lastLookAroundTime: 0,
-            isPurring: false,
-            heartInterval: null,
-            idleBehaviorTimer: null,
-            lastChaseTime: 0,
+        function initProjectFan(carousel, entries) {
+            const trackId = carousel.id + '-track';
+            carousel.innerHTML = `
+                <div class="project-track" id="${trackId}">
+                    ${entries.map((project, index) => `
+                        <article class="project-feature${project.goldOutline ? ' has-gold-outline' : ''}">
+                            ${project.image ? `<div class="project-feature-media" style="--project-gradient: ${project.gradient}">
+                                <img src="${project.image}" alt="" loading="lazy" decoding="async" draggable="false">
+                            </div>` : ''}
+                            <div class="project-feature-copy">
+                                <h2><button type="button" data-card="${index}">${project.title}</button></h2>
+                                <p class="project-summary">${project.summary || project.description}</p>
+                                <ul class="project-feature-stack" aria-label="Technologies">
+                                    ${project.stack.slice(0, 4).map((technology) => `<li>${technology}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </article>
+                    `).join('')}
+                </div>
+                <div class="project-carousel-controls" ${entries.length < 2 ? 'hidden' : ''}>
+                    <button class="project-control" type="button" data-step="-1" aria-label="Previous project" aria-controls="${trackId}">←</button>
+                    <span class="project-count"></span>
+                    <button class="project-control" type="button" data-step="1" aria-label="Next project" aria-controls="${trackId}">→</button>
+                </div>
+            `;
+            const track = carousel.querySelector('.project-track');
+            const cards = [...track.children];
+            const buttons = cards.map((card) => card.querySelector('button'));
+            const count = carousel.querySelector('.project-count');
+            const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+            const half = Math.floor(cards.length / 2);
+            let active = 0;
+            let timer;
+            let visible = false;
+            let pageReady = false;
+            let hovered = false;
+            let swipeStart;
+            let suppressClick = false;
+            carousel.classList.toggle('is-stacked', !reducedMotion.matches);
 
-            // Persistent affection — how many times Nex has been petted/played with, across visits
-            affectionCount: 0,
-            affectionMilestones: [5, 15, 30, 60],
-            milestoneMessages: {
-                5: 'NEX // WARMING UP',
-                15: 'NEX // TRUSTS YOU',
-                30: 'NEX // BONDED',
-                60: 'NEX // BEST FRIENDS \u2665'
-            },
+            function reveal() {
+                if (reducedMotion.matches) carousel.classList.remove('is-stacked', 'is-entering');
+                if (pageReady && visible && carousel.classList.contains('is-stacked')) {
+                    carousel.classList.remove('is-stacked');
+                    carousel.classList.add('is-entering');
+                }
+                schedule();
+            }
 
-            // Lines fired when chasing a click, like a laser pointer
-            chaseLines: [
-                "NEX // ON IT",
-                "NEX // INTERCEPTING",
-                "NEX // TARGET ACQUIRED"
-            ],
+            function schedule() {
+                window.clearTimeout(timer);
+                if (cards.length < 2 || !pageReady || !visible || hovered || swipeStart ||
+                    reducedMotion.matches || document.hidden || carousel.contains(document.activeElement) ||
+                    detailOverlay.classList.contains('open')) return;
+                timer = window.setTimeout(() => select(active + 1), 8000);
+            }
 
-            // Quiet lines fired when the cursor gets too close
-            personalSpaceLines: [
-                "NEX // TOO CLOSE",
-                "NEX // EASY",
-                "NEX // SPACE, PLEASE"
-            ],
-
-            // Understated reactions when actually clicked/poked
-            startledLines: [
-                "NEX // HEY",
-                "NEX // OKAY THEN",
-                "NEX // NOTED"
-            ],
-
-            init() {
-                this.el = document.getElementById('cyber-cat-container');
-                if (!this.el) return;
-                this.bodyWrap = document.getElementById('cyber-cat-body-wrap');
-                this.statusEl = document.getElementById('cyber-cat-status');
-                this.headGroup = document.getElementById('cat-head-group');
-                this.pupilLeft = document.getElementById('cat-pupil-left');
-                this.pupilRight = document.getElementById('cat-pupil-right');
-
-                this.lastActivityTime = Date.now();
-                this.loadAffection();
-
-                // Click reaction (startled hop)
-                this.el.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    this.onClick();
+            function select(index, focus = false) {
+                if (index !== active) carousel.classList.remove('is-stacked', 'is-entering');
+                active = (index + cards.length) % cards.length;
+                cards.forEach((card, i) => {
+                    const position = (i - active + half + cards.length) % cards.length - half;
+                    card.dataset.position = position;
+                    card.hidden = Math.abs(position) > 2;
+                    buttons[i].tabIndex = position === 0 ? 0 : -1;
                 });
+                count.textContent = `${active + 1} / ${cards.length}`;
+                if (focus) buttons[active].focus({ preventScroll: true });
+                schedule();
+            }
 
-                // Click-to-chase: click anywhere open in the hero and Nex darts over,
-                // like chasing a laser pointer. Ignored on interactive elements & touch.
-                document.addEventListener('click', (e) => {
-                    if (window.innerWidth <= 768) return;
-                    if (this.state === 'HIDDEN' || this.state === 'HERO_ENTRY' || this.state === 'SLEEPING') return;
-                    const scrollY = window.scrollY || window.pageYOffset;
-                    if (scrollY > 450) return;
-                    if (e.target.closest('#cyber-cat-container, a, button, input, textarea, select, .project-item, nav')) return;
-                    this.chaseToPoint(e.clientX, e.clientY);
-                });
-
-                // "meow" keyboard easter egg — type it anywhere on the page
-                this.initMeowEasterEgg();
-
-                // Double-click reaction (happy jump + hearts)
-                this.el.addEventListener('dblclick', (e) => {
-                    e.stopPropagation();
-                    this.onDoubleClick();
-                });
-
-                // Hover petting — eyes close contentedly while purring
-                this.el.addEventListener('mouseenter', () => {
-                    if (this.state === 'SLEEPING') this.wake();
-                    if (this.state === 'HIDDEN' || this.state === 'HERO_ENTRY') return;
-                    this.startPurring();
-                });
-
-                this.el.addEventListener('mouseleave', () => {
-                    this.stopPurring();
-                });
-
-                // Mouse movement tracking throttled with RAF
-                let rafId = null;
-                window.addEventListener('mousemove', (e) => {
-                    if (rafId) return;
-                    rafId = requestAnimationFrame(() => {
-                        this.onMouseMove(e.clientX, e.clientY);
-                        rafId = null;
-                    });
-                });
-
-                // Periodic eye blink interval — mostly quick blinks, occasionally a slow, contented one
-                setInterval(() => {
-                    if (this.state !== 'IDLE' || this.isPurring || Math.random() >= 0.6) return;
-                    if (Math.random() < 0.12) {
-                        this.el.classList.add('is-slow-blinking');
-                        setTimeout(() => this.el.classList.remove('is-slow-blinking'), 900);
-                    } else {
-                        this.el.classList.add('is-blinking');
-                        setTimeout(() => this.el.classList.remove('is-blinking'), 160);
-                    }
-                }, 3800 + Math.random() * 1200);
-
-                // Inactivity check — cat falls asleep after a while alone
-                setInterval(() => this.checkSleep(), 2000);
-
-                // Random idle behaviors: grooming, yawning, stretching, ear twitches
-                this.scheduleIdleBehavior();
-            },
-
-            // ================================
-            // RANDOM IDLE BEHAVIORS
-            // ================================
-            scheduleIdleBehavior() {
-                const delay = 4200 + Math.random() * 6000;
-                this.idleBehaviorTimer = setTimeout(() => {
-                    this.performRandomIdleBehavior();
-                    this.scheduleIdleBehavior();
-                }, delay);
-            },
-
-            performRandomIdleBehavior() {
-                if (this.state !== 'IDLE' || !this.el || document.hidden) return;
-                const roll = Math.random();
-                if (roll < 0.18) {
-                    this.playGroom();
-                } else if (roll < 0.30) {
-                    this.playYawn();
-                } else if (roll < 0.40) {
-                    this.playStretch();
-                } else if (roll < 0.55) {
-                    this.playEarTwitch();
-                } else if (roll < 0.8) {
-                    this.playLookAround();
-                }
-                // remaining probability: cat just stays put, watching
-            },
-
-            playLookAround() {
-                if (!this.headGroup || typeof gsap === 'undefined') return;
-                const direction = Math.random() < 0.5 ? -1 : 1;
-                const angle = direction * (9 + Math.random() * 8);
-                const tl = gsap.timeline();
-                tl.to(this.headGroup, {
-                    rotate: angle,
-                    y: -1.5,
-                    transformOrigin: '60px 60px',
-                    duration: 0.55,
-                    ease: 'sine.inOut'
-                }).to(this.headGroup, {
-                    rotate: angle * 0.4,
-                    duration: 0.5,
-                    ease: 'sine.inOut'
-                }).to(this.headGroup, {
-                    rotate: 0,
-                    y: 0,
-                    duration: 0.7,
-                    delay: 0.25,
-                    ease: 'sine.inOut'
-                });
-            },
-
-            playGroom() {
-                this.el.classList.add('is-grooming');
-                this.showStatus('NEX // GROOMING', 1300);
-                setTimeout(() => this.el.classList.remove('is-grooming'), 1300);
-            },
-
-            playYawn() {
-                this.el.classList.add('is-yawning');
-                this.showStatus('NEX // YAWN...', 1000);
-                setTimeout(() => this.el.classList.remove('is-yawning'), 900);
-            },
-
-            playStretch() {
-                this.el.classList.add('is-stretching');
-                this.showStatus('NEX // STRETCHING', 1200);
-                setTimeout(() => this.el.classList.remove('is-stretching'), 1150);
-            },
-
-            playEarTwitch() {
-                const side = Math.random() < 0.5 ? 'left' : 'right';
-                this.el.classList.add(`is-twitching-${side}`);
-                setTimeout(() => this.el.classList.remove(`is-twitching-${side}`), 350);
-            },
-
-            // ================================
-            // SLEEP CYCLE
-            // ================================
-            checkSleep() {
-                if (this.state !== 'IDLE' || !this.el) return;
-                if (Date.now() - this.lastActivityTime > 26000) {
-                    this.enterSleep();
-                }
-            },
-
-            enterSleep() {
-                this.state = 'SLEEPING';
-                this.stopPurring();
-                this.el.classList.remove('is-idle', 'is-crouching');
-                this.el.classList.add('is-sleeping');
-                this.showStatus('NEX // SLEEPING', 1600);
-            },
-
-            wake() {
-                if (this.state !== 'SLEEPING') return;
-                this.state = 'IDLE';
-                this.el.classList.remove('is-sleeping');
-                this.el.classList.add('is-idle');
-                this.showStatus('NEX // AWAKE', 1200);
-                this.lastActivityTime = Date.now();
-            },
-
-            // ================================
-            // PETTING / PURRING
-            // ================================
-            startPurring() {
-                if (!this.el || this.isPurring) return;
-                this.isPurring = true;
-                this.el.classList.add('is-purring');
-                this.showStatus('NEX // PURRING \u2665', 1600);
-                this.spawnHeart();
-                this.heartInterval = setInterval(() => this.spawnHeart(), 480);
-                this.incrementAffection(1);
-            },
-
-            stopPurring() {
-                if (!this.isPurring) return;
-                this.isPurring = false;
-                if (this.el) this.el.classList.remove('is-purring');
-                clearInterval(this.heartInterval);
-            },
-
-            spawnHeart() {
-                if (!this.el) return;
-                const heart = document.createElement('div');
-                heart.className = 'cat-heart-particle';
-                heart.textContent = '\u2665';
-                heart.style.setProperty('--drift', (Math.random() * 24 - 12) + 'px');
-                heart.style.left = (38 + Math.random() * 24) + '%';
-                this.el.appendChild(heart);
-                setTimeout(() => heart.remove(), 1200);
-            },
-
-            showStatus(text, duration = 2000) {
-                if (!this.statusEl) return;
-                clearTimeout(this.statusTimeout);
-                this.statusEl.textContent = text;
-                this.statusEl.classList.add('visible');
-                this.statusTimeout = setTimeout(() => {
-                    this.statusEl.classList.remove('visible');
-                }, duration);
-            },
-
-            startHeroEntry() {
-                if (!this.el) return;
-                // Start at the fixed lower-left home position; no running entry.
-                this.el.classList.add('visible', 'is-idle');
-                this.state = 'IDLE';
-                this.lastActivityTime = Date.now();
-                this.showStatus('NEX // ONLINE', 1400);
-            },
-
-            onMouseMove(mouseX, mouseY) {
-                if (this.state === 'HIDDEN' || this.state === 'HERO_ENTRY' || this.state === 'RUNNING_TO_POINT') return;
-
-                // Check scroll position — if scrolled past Hero, hide cat smoothly
-                const scrollY = window.scrollY || window.pageYOffset;
-                if (scrollY > 450) {
-                    this.el.classList.remove('visible');
-                    return;
-                } else {
-                    this.el.classList.add('visible');
-                }
-
-                this.lastActivityTime = Date.now();
-
-                // Touch / mobile screen optimization
-                if (window.innerWidth <= 768) return;
-
-                const rect = this.el.getBoundingClientRect();
-                const catX = rect.left + rect.width / 2;
-                const catY = rect.top + rect.height / 2;
-
-                const dx = mouseX - catX;
-                const dy = mouseY - catY;
-                const dist = Math.hypot(dx, dy);
-
-                // Wake up if the cursor comes near a sleeping cat
-                if (this.state === 'SLEEPING') {
-                    if (dist < 170) this.wake();
-                    return;
-                }
-
-                // Stop purring once the cursor wanders back off
-                if (this.isPurring && dist > 110) {
-                    this.stopPurring();
-                }
-
-                // Orient body towards cursor direction
-                if (dx < -10 && !this.isFlipped) {
-                    this.isFlipped = true;
-                    this.el.classList.add('is-flipped');
-                } else if (dx > 10 && this.isFlipped) {
-                    this.isFlipped = false;
-                    this.el.classList.remove('is-flipped');
-                }
-
-                // Dynamic head & eye pupil tracking
-                if (this.headGroup && (this.state === 'IDLE' || this.state === 'CROUCHING')) {
-                    const headAngle = Math.max(-14, Math.min(14, (dx / window.innerWidth) * 35));
-                    const headY = Math.max(-4, Math.min(4, (dy / window.innerHeight) * 12));
-                    gsap.to(this.headGroup, {
-                        rotate: headAngle,
-                        y: headY,
-                        transformOrigin: '60px 60px',
-                        duration: 0.2,
-                        ease: 'power1.out'
-                    });
-
-                    // Shift pupils to track cursor
-                    const pupilX = Math.max(-2, Math.min(2, dx * 0.015));
-                    const pupilY = Math.max(-2, Math.min(2, dy * 0.015));
-                    if (this.pupilLeft && this.pupilRight) {
-                        this.pupilLeft.setAttribute('transform', `translate(${pupilX}, ${pupilY})`);
-                        this.pupilRight.setAttribute('transform', `translate(${pupilX}, ${pupilY})`);
-                    }
-                }
-
-                const now = Date.now();
-
-                // 1. Notice / Crouch zone (~150px)
-                if (dist < 150 && dist >= 85 && (this.state === 'IDLE' || this.state === 'CROUCHING')) {
-                    if (this.state === 'IDLE' && now - this.lastNoticeTime > 4000) {
-                        this.lastNoticeTime = now;
-                        if (Math.random() < 0.5) {
-                            const wary = this.waryLines[Math.floor(Math.random() * this.waryLines.length)];
-                            this.showStatus(wary, 1300);
-                        }
-                    }
-                    this.state = 'CROUCHING';
-                    this.el.classList.add('is-crouching');
-                    this.el.classList.remove('is-idle');
-                } else if (dist >= 150 && this.state === 'CROUCHING') {
-                    this.state = 'IDLE';
-                    this.el.classList.remove('is-crouching');
-                    this.el.classList.add('is-idle');
-                }
-
-                // 2. Close-proximity zone (~85px) — a real cat is wary but often curious, not panicked
-                if (dist < 85 && (now - this.lastEscapeTime > 1400) && this.state !== 'ESCAPING') {
-                    this.lastEscapeTime = now;
-                    this.startPurring();
-                    return;
-
-                    // Most of the time it simply stays and allows the attention
-                    if (Math.random() < 0.4) {
-                        this.startPurring();
+            buttons.forEach((button, index) => {
+                button.addEventListener('click', (event) => {
+                    if (suppressClick && event.detail) {
+                        suppressClick = false;
                         return;
                     }
-
-                    // Otherwise: one small, natural step back — not a frantic dash
-                    this.state = 'ESCAPING';
-                    this.el.classList.remove('is-idle', 'is-crouching');
-                    this.el.classList.add('is-retreating');
-
-                    const escapeAngle = Math.atan2(-dy, -dx) + (Math.random() * 0.4 - 0.2);
-                    const escapeDistance = 55 + Math.random() * 35;
-
-                    let newX = this.x + Math.cos(escapeAngle) * escapeDistance;
-                    let newY = this.y + Math.sin(escapeAngle) * escapeDistance;
-
-                    const maxBoundaryX = window.innerWidth * 0.65;
-                    const minBoundaryX = -20;
-                    const maxBoundaryY = 60;
-                    const minBoundaryY = -120;
-
-                    newX = Math.max(minBoundaryX, Math.min(maxBoundaryX, newX));
-                    newY = Math.max(minBoundaryY, Math.min(maxBoundaryY, newY));
-
-                    this.x = newX;
-                    this.y = newY;
-
-                    if (newX < catX && !this.isFlipped) {
-                        this.isFlipped = true;
-                        this.el.classList.add('is-flipped');
-                    }
-
-                    if (Math.random() < 0.35) {
-                        const msg = this.personalSpaceLines[Math.floor(Math.random() * this.personalSpaceLines.length)];
-                        this.showStatus(msg, 1500);
-                    }
-
-                    gsap.to(this.el, {
-                        x: newX,
-                        y: newY,
-                        duration: 0.5,
-                        ease: 'power2.out',
-                        onComplete: () => {
-                            this.el.classList.remove('is-retreating');
-                            this.el.classList.add('is-idle');
-                            this.state = 'IDLE';
-
-                            setTimeout(() => {
-                                if (mouseX < rect.left) {
-                                    this.isFlipped = true;
-                                    this.el.classList.add('is-flipped');
-                                } else {
-                                    this.isFlipped = false;
-                                    this.el.classList.remove('is-flipped');
-                                }
-                            }, 200);
-                        }
-                    });
-                }
-            },
-
-            onClick() {
-                if (this.state === 'HERO_ENTRY') return;
-                if (this.state === 'SLEEPING') { this.wake(); return; }
-
-                this.stopPurring();
-                const startledMsg = this.startledLines[Math.floor(Math.random() * this.startledLines.length)];
-                this.showStatus(startledMsg, 1500);
-                this.startPurring();
-                return;
-
-                gsap.to(this.bodyWrap, {
-                    y: -13,
-                    duration: 0.16,
-                    yoyo: true,
-                    repeat: 1,
-                    ease: 'power2.out'
+                    if (index === active) openProject(projects.indexOf(entries[index]));
+                    else select(index, document.activeElement === button);
                 });
-
-                const jumpRetreatX = this.x + (this.isFlipped ? 45 : -45);
-                this.x = Math.max(-20, Math.min(window.innerWidth * 0.65, jumpRetreatX));
-
-                gsap.to(this.el, {
-                    x: this.x,
-                    duration: 0.45,
-                    delay: 0.12,
-                    ease: 'power2.out'
-                });
-            },
-
-            onDoubleClick() {
-                if (this.state === 'HERO_ENTRY') return;
-                if (this.state === 'SLEEPING') this.wake();
-
-                this.lastActivityTime = Date.now();
-                this.showStatus('NEX // \u2665', 1400);
-                this.incrementAffection(2);
-
-                // Brief purr-glow burst even outside the normal petting flow
-                this.el.classList.add('is-purring');
-                setTimeout(() => {
-                    if (!this.isPurring) this.el.classList.remove('is-purring');
-                }, 900);
-
-                gsap.to(this.bodyWrap, {
-                    y: -18,
-                    rotation: this.isFlipped ? -6 : 6,
-                    duration: 0.24,
-                    yoyo: true,
-                    repeat: 1,
-                    ease: 'sine.inOut',
-                    onComplete: () => gsap.set(this.bodyWrap, { rotation: 0 })
-                });
-
-                for (let i = 0; i < 3; i++) {
-                    setTimeout(() => this.spawnHeart(), i * 160);
-                }
-            },
-
-            // ================================
-            // PERSISTENT AFFECTION
-            // ================================
-            loadAffection() {
-                try {
-                    const stored = window.localStorage.getItem('nexAffection');
-                    this.affectionCount = stored ? (parseInt(stored, 10) || 0) : 0;
-                } catch (e) {
-                    this.affectionCount = 0;
-                }
-            },
-
-            saveAffection() {
-                try {
-                    window.localStorage.setItem('nexAffection', String(this.affectionCount));
-                } catch (e) {
-                    // localStorage unavailable (private browsing, etc.) — affection just won't persist
-                }
-            },
-
-            incrementAffection(amount = 1) {
-                this.affectionCount += amount;
-                this.saveAffection();
-                const hit = this.affectionMilestones.find(m => this.affectionCount === m || this.affectionCount === m + 1);
-                if (hit && this.milestoneMessages[hit]) {
-                    setTimeout(() => this.showStatus(this.milestoneMessages[hit], 2200), 1700);
-                }
-            },
-
-            // ================================
-            // CLICK-TO-CHASE ("laser pointer" play)
-            // ================================
-            chaseToPoint(clickX, clickY) {
-                if (!this.el || typeof gsap === 'undefined') return;
-                if (this.state !== 'IDLE' && this.state !== 'CROUCHING') return;
-                this.showStatus('NEX // WATCHING', 900);
-                return;
-
-                const now = Date.now();
-                if (now - this.lastChaseTime < 900) return;
-                this.lastChaseTime = now;
-                this.lastActivityTime = now;
-                this.stopPurring();
-
-                const rect = this.el.getBoundingClientRect();
-                const catX = rect.left + rect.width / 2;
-                const catY = rect.top + rect.height / 2;
-
-                const maxBoundaryX = window.innerWidth * 0.65;
-                const minBoundaryX = -20;
-                const maxBoundaryY = 60;
-                const minBoundaryY = -120;
-
-                const newX = Math.max(minBoundaryX, Math.min(maxBoundaryX, this.x + (clickX - catX)));
-                const newY = Math.max(minBoundaryY, Math.min(maxBoundaryY, this.y + (clickY - catY)));
-                const travelDist = Math.hypot(newX - this.x, newY - this.y);
-
-                const movingRight = newX > this.x;
-                if (movingRight && this.isFlipped) {
-                    this.isFlipped = false;
-                    this.el.classList.remove('is-flipped');
-                } else if (!movingRight && !this.isFlipped) {
-                    this.isFlipped = true;
-                    this.el.classList.add('is-flipped');
-                }
-
-                this.x = newX;
-                this.y = newY;
-                this.state = 'RUNNING_TO_POINT';
-                this.el.classList.remove('is-idle', 'is-crouching');
-                this.el.classList.add('is-running');
-
-                if (Math.random() < 0.6) {
-                    const line = this.chaseLines[Math.floor(Math.random() * this.chaseLines.length)];
-                    this.showStatus(line, 1200);
-                }
-
-                gsap.to(this.el, {
-                    x: newX,
-                    y: newY,
-                    duration: Math.min(1.15, 0.35 + travelDist / 900),
-                    ease: 'power2.out',
-                    onComplete: () => {
-                        if (this.state !== 'RUNNING_TO_POINT') return;
-                        this.el.classList.remove('is-running');
-                        this.el.classList.add('is-idle');
-                        this.state = 'IDLE';
-                        this.lastActivityTime = Date.now();
-                    }
-                });
-            },
-
-            // ================================
-            // "MEOW" KEYBOARD EASTER EGG
-            // ================================
-            initMeowEasterEgg() {
-                let buffer = '';
-                window.addEventListener('keydown', (e) => {
-                    if (e.metaKey || e.ctrlKey || e.altKey) return;
-                    const tag = (document.activeElement && document.activeElement.tagName) || '';
-                    if (tag === 'INPUT' || tag === 'TEXTAREA') return;
-                    if (!e.key || e.key.length !== 1) return;
-                    buffer = (buffer + e.key.toLowerCase()).slice(-4);
-                    if (buffer === 'meow') {
-                        buffer = '';
-                        this.playMeowEasterEgg();
-                    }
-                });
-            },
-
-            playMeowEasterEgg() {
-                if (!this.el || typeof gsap === 'undefined') return;
-                if (this.state === 'HIDDEN' || this.state === 'HERO_ENTRY') return;
-                if (this.state === 'SLEEPING') this.wake();
-
-                const wasHidden = !this.el.classList.contains('visible');
-                if (wasHidden) this.el.classList.add('visible');
-
-                this.lastActivityTime = Date.now();
-                this.showStatus('NEX // MEOW!', 1600);
-                this.incrementAffection(1);
-
-                gsap.to(this.bodyWrap, {
-                    y: -22,
-                    rotation: this.isFlipped ? -10 : 10,
-                    duration: 0.22,
-                    yoyo: true,
-                    repeat: 3,
-                    ease: 'sine.inOut',
-                    onComplete: () => gsap.set(this.bodyWrap, { rotation: 0 })
-                });
-
-                for (let i = 0; i < 5; i++) {
-                    setTimeout(() => this.spawnHeart(), i * 130);
-                }
-
-                if (wasHidden) {
-                    setTimeout(() => {
-                        const scrollY = window.scrollY || window.pageYOffset;
-                        if (scrollY > 450) this.el.classList.remove('visible');
-                    }, 1800);
-                }
-            },
-
-            onProjectHover(isHovered, projTitle) {
-                if (!this.el || this.state === 'HIDDEN' || window.innerWidth <= 768) return;
-                if (isHovered) {
-                    if (this.state === 'SLEEPING') this.wake();
-                    this.lastActivityTime = Date.now();
-                    this.showStatus(`NEX // SCANNING ${projTitle}`, 1400);
-                    gsap.to(this.bodyWrap, { rotate: 8, duration: 0.3 });
-                } else {
-                    gsap.to(this.bodyWrap, { rotate: 0, duration: 0.3 });
-                }
-            }
-        };
-
-        function renderProjects() {
-            const container = document.getElementById('project-list');
-            const more = document.getElementById('project-more');
-            const additional = document.getElementById('additional-project-list');
-            const cards = projects.map((proj, i) => `
-                <div class="project-item" data-project="${i}">
-                    <div class="project-index">
-                        <span class="project-num">${proj.num}</span>
-                        <span class="project-year">${proj.year}</span>
-                    </div>
-                    <div class="project-primary">
-                        <span class="project-eyebrow">Case study / ${proj.role}</span>
-                        <h2>${proj.title}</h2>
-                        <p class="project-summary">${proj.summary || proj.description}</p>
-                        <div class="project-stack-preview">
-                            ${proj.stack.slice(0, 4).map((item) => `<span>${item}</span>`).join('')}
-                        </div>
-                    </div>
-                    <div class="project-aside">
-                        <span class="project-cat">${proj.category}</span>
-                        <span class="project-status">${proj.status}</span>
-                        <span class="project-arrow" aria-hidden="true">→</span>
-                    </div>
-                </div>
-            `);
-            container.innerHTML = cards.filter((_, i) => projects[i].featured).join('');
-            additional.innerHTML = cards.filter((_, i) => !projects[i].featured).join('');
-            more.hidden = !additional.children.length;
-
-            bindProjectInteractions();
-        }
-
-        function bindProjectInteractions() {
-            document.querySelectorAll('.project-item').forEach(item => {
-                const i = Number(item.dataset.project);
-                item.addEventListener('mouseenter', () => {
-                    const requestId = ++previewVisualRequest;
-                    setProjectVisual(preview, projects[i], requestId);
-                    previewLabel.textContent = projects[i].title;
-                    preview.classList.add('visible');
-                    CyberCat.onProjectHover(true, projects[i].title);
-                });
-                item.addEventListener('mouseleave', () => {
-                    preview.classList.remove('visible');
-                    CyberCat.onProjectHover(false);
-                });
-                item.addEventListener('click', () => openProject(i));
             });
+            carousel.querySelectorAll('[data-step]').forEach((button) => {
+                button.addEventListener('click', () => select(active + Number(button.dataset.step)));
+            });
+            carousel.addEventListener('pointerenter', (event) => {
+                if (event.pointerType === 'touch') return;
+                hovered = true;
+                schedule();
+            });
+            carousel.addEventListener('pointerleave', (event) => {
+                if (event.pointerType === 'touch') return;
+                hovered = false;
+                schedule();
+            });
+            track.addEventListener('pointerdown', (event) => {
+                suppressClick = false;
+                if (event.pointerType === 'mouse' || !event.isPrimary) return;
+                swipeStart = { id: event.pointerId, x: event.clientX, y: event.clientY };
+                schedule();
+            });
+            window.addEventListener('pointerup', (event) => {
+                if (swipeStart?.id !== event.pointerId) return;
+                const dx = event.clientX - swipeStart.x;
+                const dy = event.clientY - swipeStart.y;
+                swipeStart = undefined;
+                if (Math.abs(dx) > 32 && Math.abs(dx) > Math.abs(dy)) {
+                    suppressClick = true;
+                    select(active + (dx < 0 ? 1 : -1));
+                }
+                schedule();
+            });
+            window.addEventListener('pointercancel', (event) => {
+                if (swipeStart?.id !== event.pointerId) return;
+                swipeStart = undefined;
+                schedule();
+            });
+            track.addEventListener('keydown', (event) => {
+                if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) return;
+                event.preventDefault();
+                select(active + (event.key === 'ArrowRight' ? 1 : -1), true);
+            });
+            carousel.addEventListener('focusin', schedule);
+            carousel.addEventListener('focusout', () => queueMicrotask(schedule));
+            document.addEventListener('visibilitychange', schedule);
+            reducedMotion.addEventListener('change', reveal);
+            track.addEventListener('animationend', (event) => {
+                if (event.animationName === 'project-fan-in' &&
+                    Math.abs(Number(event.target.dataset.position)) === Math.min(2, half)) {
+                    carousel.classList.remove('is-entering');
+                }
+            });
+            new IntersectionObserver(([entry]) => {
+                visible = entry.intersectionRatio >= 0.25;
+                reveal();
+            }, { threshold: 0.25 }).observe(track);
+
+            select(active);
+            return () => {
+                pageReady = true;
+                reveal();
+            };
         }
 
         // ================================
@@ -3046,6 +2044,7 @@
             document.getElementById('detail-desc').textContent = proj.description;
             document.getElementById('detail-role').textContent = proj.role;
             document.getElementById('detail-status').textContent = proj.status;
+            document.getElementById('detail-visual-label').textContent = proj.visualLabel || 'Project visual';
             document.getElementById('detail-stack').innerHTML =
                 proj.stack.map(s => `<span class="stack-tag">${s}</span>`).join('');
 
@@ -3091,8 +2090,10 @@
             if (previousFocus instanceof HTMLElement) previousFocus.focus();
         }
 
-        renderProjects();
-        document.getElementById('project-more').addEventListener('toggle', () => ScrollTrigger.refresh());
+        const [bridge, stegoVault, forge, ...otherProjects] = projects;
+        const revealProjects = initProjectFan(document.getElementById('all-projects'), [
+            bridge, stegoVault, ...otherProjects, forge
+        ]);
 
         // ================================
         // TEXT SCRAMBLE ENGINE
@@ -3175,7 +2176,7 @@
                 onComplete: () => {
                     scramble.setText('MILEN');
                     initAnimations();
-                    CyberCat.startHeroEntry();
+                    revealProjects();
                 }
             });
         }
@@ -3279,8 +2280,7 @@
             const staggerGroups = [
                 { selector: '.cap-card', from: 26 },
                 { selector: '.profile-panel', from: 26 },
-                { selector: '.tech-group', from: 16 },
-                { selector: '#project-list .project-item', from: 22 }
+                { selector: '.tech-group', from: 16 }
             ];
             staggerGroups.forEach(({ selector, from }) => {
                 const items = gsap.utils.toArray(selector);
@@ -3371,7 +2371,7 @@
             gsap.to(follower, { x: e.clientX - 20, y: e.clientY - 20, duration: 0.3 });
         });
 
-        document.querySelectorAll('a, button, .project-item, .cap-card').forEach(el => {
+        document.querySelectorAll('a, button, .cap-card').forEach(el => {
             el.addEventListener('mouseenter', () => {
                 gsap.to(follower, { scale: 2, backgroundColor: 'rgba(255,255,255,0.08)', duration: 0.3 });
             });
@@ -3384,8 +2384,6 @@
         // PROJECT HOVER PREVIEW POSITION
         // ================================
         document.addEventListener('mousemove', (e) => {
-            preview.style.left = (e.clientX + 30) + 'px';
-            preview.style.top = Math.max(10, e.clientY - 105) + 'px';
         });
 
         document.getElementById('detail-close').addEventListener('click', closeProject);
@@ -3509,8 +2507,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // Initialize CyberCat Mascot ("Nex")
-        CyberCat.init();
     </script>
 </body>
 </html>
