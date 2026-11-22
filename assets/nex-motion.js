@@ -29,14 +29,22 @@
         return { left, top, frame, weights };
     }
 
-    function drawMotion(region, dx, dy) {
-        const { frame, left, top, weights } = region;
+    function drawMotion(region, dx, dy, expression) {
+        const { frame, left, top, weights, eyeWeights, earWeights } = region;
         for (let y = 0; y < frame.height; y++) {
             for (let x = 0; x < frame.width; x++) {
                 const index = y * frame.width + x;
                 const weight = weights[index];
-                const sourceX = left + x - dx * weight;
-                const sourceY = top + y - dy * weight;
+                let sourceX = left + x - dx * weight;
+                let sourceY = top + y - dy * weight;
+                if (expression) {
+                    const eye = eyeWeights[index];
+                    const ear = earWeights[index];
+                    sourceX -= expression.eyeX * eye + 12 * expression.ear * ear -
+                        expression.roll * (top + y - 132) * weight;
+                    sourceY -= expression.eyeY * eye + 4 * expression.ear * ear +
+                        expression.roll * (left + x - 137) * weight;
+                }
                 const x0 = Math.floor(sourceX);
                 const y0 = Math.floor(sourceY);
                 const fracX = sourceX - x0;
@@ -81,7 +89,6 @@
     }
 
     let pixels;
-    let ear;
     let tail;
     let paw;
     let head;
@@ -95,20 +102,40 @@
     let idleTimer;
     let sleepTimer;
     let blinkTimer;
+    let lastActivity = performance.now();
+    let pointer;
+    let targetX = 0;
+    let targetY = 0;
+    let lookX = 0;
+    let lookY = 0;
+    let earFlick = 0;
+    let headDirty = true;
+
+    function eyeWeight(x, y, centerX, centerY) {
+        return 1 - fade(Math.hypot((x - centerX) / 19, (y - centerY) / 16), .36, 1);
+    }
 
     function start() {
         if (!context || !image.naturalWidth || pixels) return;
         context.drawImage(image, 0, 0, width, height);
         restingImage = context.getImageData(0, 0, width, height);
         pixels = restingImage.data;
-        ear = makeRegion(15, 0, 145, 111, (x, y) =>
-            band(x, 16, 34, 99, 144) * (1 - fade(y, 12, 110)));
-        tail = makeRegion(249, 190, 360, 386, (x, y) =>
-            fade(x, 250, 271) * band(y, 191, 216, 250, 385));
+        tail = makeRegion(249, 172, 360, 401, (x, y) =>
+            fade(x, 249, 269) * band(y, 173, 205, 262, 400));
         paw = makeRegion(132, 254, 196, height, (x, y) =>
             band(x, 132, 150, 174, 195) * fade(y, 255, 380));
         head = makeRegion(0, 0, 249, 253, (x, y) =>
             (1 - fade(y, 174, 252)) * (1 - fade(x, 232, 248)));
+        head.eyeWeights = head.weights.map((_, index) => {
+            const x = index % head.frame.width;
+            const y = Math.floor(index / head.frame.width);
+            return Math.max(eyeWeight(x, y, 96, 124), eyeWeight(x, y, 172, 136));
+        });
+        head.earWeights = head.weights.map((_, index) => {
+            const x = index % head.frame.width;
+            const y = Math.floor(index / head.frame.width);
+            return band(x, 16, 34, 99, 144) * (1 - fade(y, 12, 110));
+        });
         updateActivity();
     }
 
@@ -124,6 +151,7 @@
         if (pose) {
             if (pose.fresh) {
                 context.putImageData(restingImage, 0, 0);
+                headDirty = true;
                 pose.fresh = false;
             }
             const progress = Math.min((now - pose.startedAt) / pose.duration, 1);
@@ -131,9 +159,44 @@
             if (progress === 1) pose = undefined;
         }
 
-        const phase = now * 2 * Math.PI / 4200;
+        renderHead();
+        const phase = now * 2 * Math.PI / 3200;
         const energy = 1 - .7 * sleepDepth;
-        drawMotion(tail, Math.sin(phase) * 9 * energy, Math.sin(phase + .7) * 5 * energy);
+        // The larger part of the swing goes inward, where the art has room.
+        drawMotion(tail, (17 * Math.sin(phase) - 10) * energy, 13 * Math.sin(phase + .7) * energy);
+    }
+
+    function renderHead() {
+        const wantedX = targetX * (1 - sleepDepth);
+        const wantedY = targetY * (1 - sleepDepth);
+        const nextX = Math.abs(wantedX - lookX) < .003 ? wantedX : lookX + (wantedX - lookX) * .28;
+        const nextY = Math.abs(wantedY - lookY) < .003 ? wantedY : lookY + (wantedY - lookY) * .28;
+        if (!headDirty && nextX === lookX && nextY === lookY) return;
+        lookX = nextX;
+        lookY = nextY;
+        headDirty = false;
+
+        const dx = lookX * 2.6;
+        const lookingDown = lookY > 0;
+        const dy = lookY * (lookingDown ? 4 : 1.8) + sleepDepth * 9;
+        const roll = lookX * .033;
+        const eyeY = lookY * (lookingDown ? 6.4 : 4.8);
+        drawMotion(head, dx, dy, { eyeX: lookX * 6.8, eyeY, ear: earFlick, roll });
+        eyelids.style.transform = `translate(${100 * dx / width}%, ${100 * dy / height}%) rotate(${roll}rad)`;
+    }
+
+    function aimAtPointer() {
+        if (!visible || !pointer) return;
+        const rect = cat.getBoundingClientRect();
+        const eyeLine = rect.top + rect.height * .31;
+        const dx = pointer.x - (rect.left + rect.width * .38);
+        const dy = pointer.y - eyeLine;
+        const downRange = Math.max(28, Math.min(72, (window.innerHeight - eyeLine) * .55));
+        const horizontal = Math.tanh(dx / 180);
+        const vertical = Math.tanh(dy / (dy > 0 ? downRange : 150));
+        const distance = Math.max(1, Math.hypot(horizontal, vertical));
+        targetX = horizontal / distance;
+        targetY = vertical / distance;
     }
 
     function hideCanvas() {
@@ -146,8 +209,8 @@
         idleTimer = window.setTimeout(() => {
             if (!pose) {
                 animate(460, (progress) => {
-                    const flick = Math.sin(progress * 2 * Math.PI) * Math.sin(progress * Math.PI);
-                    drawMotion(ear, flick * 12, flick * 4);
+                    earFlick = Math.sin(progress * 2 * Math.PI) * Math.sin(progress * Math.PI);
+                    headDirty = true;
                 });
             }
             scheduleIdle();
@@ -159,25 +222,30 @@
         clearTimeout(sleepTimer);
         if (!pixels || !visible || document.hidden || reducedMotion.matches || sleeping) return;
         scheduleIdle();
-        sleepTimer = window.setTimeout(() => setSleeping(true), 60000);
+        function checkSleep() {
+            const remaining = 60000 - (performance.now() - lastActivity);
+            if (remaining > 0) sleepTimer = window.setTimeout(checkSleep, remaining);
+            else setSleeping(true);
+        }
+        sleepTimer = window.setTimeout(checkSleep, Math.max(0, 60000 - (performance.now() - lastActivity)));
     }
 
     function setSleeping(value) {
         sleeping = value;
+        earFlick = 0;
         cat.classList.toggle('is-sleeping', sleeping);
         cat.setAttribute('aria-label', sleeping ? 'Wake Nex the cat' : 'Pet Nex the cat');
         restartTimers();
         const initialDepth = sleepDepth;
         animate(value ? 1050 : 560, (progress) => {
             sleepDepth = initialDepth + (Number(value) - initialDepth) * ease(progress);
-            const drop = 9 * sleepDepth;
-            drawMotion(head, 0, drop);
-            eyelids.style.transform = `translateY(${100 * drop / height}%)`;
+            headDirty = true;
         });
     }
 
     function greet() {
         if (reducedMotion.matches) return;
+        lastActivity = performance.now();
         if (sleeping) {
             setSleeping(false);
             return;
@@ -187,6 +255,7 @@
         blinkTimer = window.setTimeout(() => cat.classList.remove('is-petted'), 860);
         restartTimers();
         if (!pixels || sleepDepth > 0) return;
+        earFlick = 0;
         animate(1200, (progress) => {
             const lift = fade(progress, 0, .27) * (1 - fade(progress, .72, 1));
             const wave = Math.sin(fade(progress, .25, .74) * 4 * Math.PI);
@@ -201,12 +270,16 @@
             pose = undefined;
             sleepDepth = 0;
             sleeping = false;
+            lookX = lookY = targetX = targetY = earFlick = 0;
             clearTimeout(blinkTimer);
             cat.classList.remove('is-sleeping', 'is-petted');
             cat.setAttribute('aria-label', 'Pet Nex the cat');
             hideCanvas();
         } else if (pixels && !frameRequest) {
+            lastActivity = performance.now();
+            aimAtPointer();
             context.putImageData(restingImage, 0, 0);
+            headDirty = true;
             canvas.hidden = false;
             portrait.classList.add('is-animated');
             frameRequest = requestAnimationFrame(tick);
@@ -215,6 +288,22 @@
     }
 
     cat.addEventListener('click', greet);
+    window.addEventListener('pointermove', (event) => {
+        if (event.pointerType !== 'mouse' || (pointer?.x === event.clientX && pointer.y === event.clientY)) return;
+        pointer = { x: event.clientX, y: event.clientY };
+        if (!visible || reducedMotion.matches) return;
+        lastActivity = performance.now();
+        aimAtPointer();
+        if (sleeping) setSleeping(false);
+    }, { passive: true });
+    function releaseGaze() {
+        pointer = undefined;
+        targetX = targetY = 0;
+    }
+    document.documentElement.addEventListener('pointerleave', releaseGaze);
+    window.addEventListener('blur', releaseGaze);
+    window.addEventListener('scroll', aimAtPointer, { passive: true });
+    window.addEventListener('resize', aimAtPointer);
     document.addEventListener('visibilitychange', updateActivity);
     reducedMotion.addEventListener('change', updateActivity);
     new IntersectionObserver(([entry]) => {
