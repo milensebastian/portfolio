@@ -363,10 +363,31 @@
             display: grid;
             gap: 12px;
         }
+        .project-more { width: 100%; max-width: 1240px; margin-top: 20px; }
+        .project-more[hidden] { display: none; }
+        .project-more summary {
+            display: inline-flex;
+            align-items: center;
+            gap: 14px;
+            min-height: 44px;
+            padding: 10px 15px;
+            border: 1px solid rgba(255,255,255,0.17);
+            font: 11px var(--font-mono);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            list-style: none;
+        }
+        .project-more summary::-webkit-details-marker { display: none; }
+        .project-more summary:hover, .project-more summary:focus-visible { border-color: var(--accent); color: var(--accent); }
+        .project-more summary::after { content: '+'; color: var(--accent); }
+        .project-more[open] summary::after { content: '−'; }
+        .project-more[open] .project-more-open, .project-more:not([open]) .project-more-close { display: none; }
+        .project-more .project-list { margin-top: 14px; }
         .project-item {
             position: relative;
-            min-height: 218px;
-            padding: clamp(26px, 3vw, 38px);
+            min-height: 0;
+            padding: clamp(22px, 2.4vw, 32px);
             border: 1px solid rgba(255,255,255,0.09);
             display: grid;
             grid-template-columns: 82px minmax(0, 1fr) minmax(176px, 0.34fr);
@@ -440,7 +461,7 @@
         .project-item:hover h2 { transform: none; color: var(--accent); }
         .project-summary {
             max-width: 660px;
-            margin-top: 17px;
+            margin-top: 13px;
             color: rgba(255,255,255,0.57);
             font-size: 13px;
             line-height: 1.6;
@@ -1846,6 +1867,13 @@
         <section class="work" id="work">
             <div class="hero-sub">SELECTED PROJECTS</div>
             <div class="project-list" id="project-list"></div>
+            <details class="project-more" id="project-more" hidden>
+                <summary>
+                    <span class="project-more-open">View all projects</span>
+                    <span class="project-more-close">Show fewer projects</span>
+                </summary>
+                <div class="project-list" id="additional-project-list"></div>
+            </details>
         </section>
 
         <section class="about" id="about">
@@ -2014,7 +2042,26 @@
         const projects = [
             {
                 num: '01',
+                title: 'BRIDGE',
+                featured: true,
+                summary: 'Share files, folders, and clipboard text across devices in encrypted, QR-paired rooms.',
+                category: 'Peer-to-Peer / File Sharing / WebRTC',
+                year: '2026',
+                role: 'Full-Stack Developer',
+                description: 'A browser-based workspace for sharing files, folders, and clipboard text between phones and computers. Devices join a QR-code room and confirm matching symbols before sharing. Rooms support up to 20 devices, with encrypted file streaming, selective clipboard sharing, camera capture, and tools for signing or controlling slides.',
+                stack: ['React', 'TypeScript', 'WebRTC', 'Web Crypto API', 'OPFS', 'Node.js'],
+                status: 'Project — Live',
+                gradient: 'linear-gradient(135deg, #101613 0%, #23372c 50%, #0d1511 100%)',
+                image: 'assets/bridge.png',
+                images: ['assets/bridge.png'],
+                url: 'https://bridge-eight-beryl.vercel.app/',
+                github: 'https://github.com/milensebastian/Bridge'
+            },
+            {
+                num: '02',
                 title: 'STEGOVAULT',
+                featured: true,
+                summary: 'Encrypt and hide messages inside images, audio, or text using browser-based steganography tools.',
                 category: 'Cybersecurity / Cryptography / Steganography',
                 year: '2026',
                 role: 'Full-Stack Developer',
@@ -2031,8 +2078,26 @@
                 github: 'https://github.com/milensebastian/stegovault'
             },
             {
-                num: '02',
+                num: '03',
+                title: 'FORGE P2P',
+                featured: true,
+                summary: 'Edit code and Markdown together in a browser workspace synchronized over WebRTC.',
+                category: 'Developer Tools / Real-Time Collaboration',
+                year: '2026',
+                role: 'Full-Stack Developer',
+                description: 'A peer-to-peer coding workspace that lets collaborators edit code and Markdown in real time. It uses WebRTC and Yjs to synchronize documents and stores drafts locally in the browser. Collaborators can join through a room link or QR code, with a built-in editor for writing and running code.',
+                stack: ['React', 'TypeScript', 'WebRTC', 'Yjs', 'Monaco Editor', 'IndexedDB'],
+                status: 'Project — Live',
+                gradient: 'linear-gradient(135deg, #0e0f18 0%, #221c3e 50%, #121323 100%)',
+                image: 'assets/forge-p2p.png',
+                images: ['assets/forge-p2p.png'],
+                url: 'https://forge-p2p.vercel.app/',
+                github: 'https://github.com/milensebastian/forge-p2p'
+            },
+            {
+                num: '04',
                 title: 'AETHERIA',
+                summary: 'Shape a 3D particle installation and its soundscape with real-time hand gestures.',
                 category: 'Creative Tech / WebGL / Computer Vision',
                 year: '2026',
                 role: 'Creative Technologist & Developer',
@@ -2048,38 +2113,9 @@
                 github: ''
             },
             {
-                num: '03',
-                title: 'BRIDGE',
-                category: 'Peer-to-Peer / File Sharing / WebRTC',
-                year: '2026',
-                role: 'Full-Stack Developer',
-                description: 'A browser-based workspace for sharing files, folders, and clipboard text between phones and computers. Devices join a QR-code room and confirm matching symbols before sharing. Rooms support up to 20 devices, with encrypted file streaming, selective clipboard sharing, camera capture, and tools for signing or controlling slides.',
-                stack: ['React', 'TypeScript', 'WebRTC', 'Web Crypto API', 'OPFS', 'Node.js'],
-                status: 'Project — Live',
-                gradient: 'linear-gradient(135deg, #101613 0%, #23372c 50%, #0d1511 100%)',
-                image: 'assets/bridge.png',
-                images: ['assets/bridge.png'],
-                url: 'https://bridge-eight-beryl.vercel.app/',
-                github: 'https://github.com/milensebastian/Bridge'
-            },
-            {
-                num: '04',
-                title: 'FORGE P2P',
-                category: 'Developer Tools / Real-Time Collaboration',
-                year: '2026',
-                role: 'Full-Stack Developer',
-                description: 'A peer-to-peer coding workspace that lets collaborators edit code and Markdown in real time. It uses WebRTC and Yjs to synchronize documents and stores drafts locally in the browser. Collaborators can join through a room link or QR code, with a built-in editor for writing and running code.',
-                stack: ['React', 'TypeScript', 'WebRTC', 'Yjs', 'Monaco Editor', 'IndexedDB'],
-                status: 'Project — Live',
-                gradient: 'linear-gradient(135deg, #0e0f18 0%, #221c3e 50%, #121323 100%)',
-                image: 'assets/forge-p2p.png',
-                images: ['assets/forge-p2p.png'],
-                url: 'https://forge-p2p.vercel.app/',
-                github: 'https://github.com/milensebastian/forge-p2p'
-            },
-            {
                 num: '05',
                 title: 'COMFORT MODE',
+                summary: 'An Android prototype that uses motion sensors to explore ways to reduce travel discomfort.',
                 category: 'Android / Sensors / Human-Computer Interaction',
                 year: '2026',
                 role: 'Android Developer',
@@ -2855,7 +2891,9 @@
 
         function renderProjects() {
             const container = document.getElementById('project-list');
-            container.innerHTML = projects.map((proj, i) => `
+            const more = document.getElementById('project-more');
+            const additional = document.getElementById('additional-project-list');
+            const cards = projects.map((proj, i) => `
                 <div class="project-item" data-project="${i}">
                     <div class="project-index">
                         <span class="project-num">${proj.num}</span>
@@ -2864,7 +2902,7 @@
                     <div class="project-primary">
                         <span class="project-eyebrow">Case study / ${proj.role}</span>
                         <h2>${proj.title}</h2>
-                        <p class="project-summary">${proj.description}</p>
+                        <p class="project-summary">${proj.summary || proj.description}</p>
                         <div class="project-stack-preview">
                             ${proj.stack.slice(0, 4).map((item) => `<span>${item}</span>`).join('')}
                         </div>
@@ -2875,13 +2913,17 @@
                         <span class="project-arrow" aria-hidden="true">→</span>
                     </div>
                 </div>
-            `).join('');
+            `);
+            container.innerHTML = cards.filter((_, i) => projects[i].featured).join('');
+            additional.innerHTML = cards.filter((_, i) => !projects[i].featured).join('');
+            more.hidden = !additional.children.length;
 
             bindProjectInteractions();
         }
 
         function bindProjectInteractions() {
-            document.querySelectorAll('.project-item').forEach((item, i) => {
+            document.querySelectorAll('.project-item').forEach(item => {
+                const i = Number(item.dataset.project);
                 item.addEventListener('mouseenter', () => {
                     const requestId = ++previewVisualRequest;
                     setProjectVisual(preview, projects[i], requestId);
@@ -3050,6 +3092,7 @@
         }
 
         renderProjects();
+        document.getElementById('project-more').addEventListener('toggle', () => ScrollTrigger.refresh());
 
         // ================================
         // TEXT SCRAMBLE ENGINE
@@ -3237,7 +3280,7 @@
                 { selector: '.cap-card', from: 26 },
                 { selector: '.profile-panel', from: 26 },
                 { selector: '.tech-group', from: 16 },
-                { selector: '.project-item', from: 22 }
+                { selector: '#project-list .project-item', from: 22 }
             ];
             staggerGroups.forEach(({ selector, from }) => {
                 const items = gsap.utils.toArray(selector);
