@@ -177,8 +177,9 @@
             top: 0;
             width: 100%;
             padding: 40px;
-            display: flex;
-            justify-content: space-between;
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            justify-items: start;
             align-items: center;
             z-index: 1000;
             font-family: var(--font-mono);
@@ -1214,9 +1215,8 @@
             .cursor, .cursor-follower { display: none !important; }
 
             /* Nav */
-            nav { padding: 22px 24px; }
+            nav { display: flex; justify-content: space-between; padding: 22px 24px; }
             .nav-links { display: none; }
-            .status { display: none; }
             .hamburger { display: flex; }
 
             /* Hero */
@@ -1397,7 +1397,6 @@
             <div class="magnetic-wrap"><a href="#technical-profile" data-nav="technical-profile">Profile</a></div>
             <div class="magnetic-wrap"><a href="#contact" data-nav="contact">Contact</a></div>
         </div>
-        <div class="status">CYBER//</div>
         <button class="hamburger" id="hamburger" aria-label="Open menu">
             <span></span><span></span><span></span>
         </button>
